@@ -43,7 +43,7 @@ Bu hafta, projenin temel iskeleti kurulmuş ve istemci (Mobil) ile sunucu (API) 
 
 ### 🔹 HAFTA 2 - Mobil Navigasyon ve Backend Entegrasyonu
 > **Açıklama:** Projenin temel iskeletinin kurulumu, mobil uygulamanın API ile haberleşmesi ve Dashboard ekranına giriş anlatılmaktadır.
-> 🔗 [**Hafta 2 İlerleme Videosu**](BURAYA_VIDEO_LINKINI_EKLE)
+> 🔗 [**Hafta 2 İlerleme Videosu**](https://www.youtube.com/watch?v=AEs_-y3yFlc)
 
 ---
 
