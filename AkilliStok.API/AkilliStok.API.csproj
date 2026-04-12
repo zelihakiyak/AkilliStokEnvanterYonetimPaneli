@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+=======
+>>>>>>> f131fd86c0357011cae217058587984a959a2eba
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -20,8 +23,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+<<<<<<< HEAD
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+=======
+>>>>>>> f131fd86c0357011cae217058587984a959a2eba
 </Project>
