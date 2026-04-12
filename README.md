@@ -35,6 +35,15 @@ Bu hafta, projenin temel iskeleti kurulmuş ve istemci (Mobil) ile sunucu (API) 
 
 ---
 
+## 📌 3. Hafta Gelişmeleri
+Bu hafta, uygulamaya kimlik doğrulama ve yetkilendirme altyapısı kazandırılmış; güvenli bir oturum yönetim sistemi hayata geçirilmiştir.
+
+* **JWT Entegrasyonu:** JSON Web Token tabanlı kimlik doğrulama sistemi `.NET Core` backend'e entegre edildi; token üretimi, imzalama ve doğrulama mekanizmaları yapılandırıldı.
+* **AuthContext:** React Native tarafında `AuthContext` ve `AsyncStorage` kullanılarak token yönetimi merkezi bir yapıya kavuşturuldu; uygulama her açıldığında oturum durumu otomatik olarak kontrol edilmektedir.
+* **Bağlantı Sorunlarının Giderilmesi:** Android emülatörü ile `.NET` backend arasındaki CORS, port ve IP adresi yapılandırmaları tamamlandı.
+  
+---
+
 ## 📺 Haftalık İlerleme Videoları
 
 ### 🔹 HAFTA 1 - Backend Altyapısı ve Veritabanı Mimarisi
@@ -45,6 +54,9 @@ Bu hafta, projenin temel iskeleti kurulmuş ve istemci (Mobil) ile sunucu (API) 
 > **Açıklama:** Projenin temel iskeletinin kurulumu, mobil uygulamanın API ile haberleşmesi ve Dashboard ekranına giriş anlatılmaktadır.
 > 🔗 [**Hafta 2 İlerleme Videosu**](https://www.youtube.com/watch?v=AEs_-y3yFlc)
 
+### 🔹 HAFTA 3 - JWT Kimlik Doğrulama ve Güvenli Oturum Yönetimi
+> **Açıklama:** JWT token entegrasyonu, rol bazlı yetkilendirme, AuthContext yapısı anlatılmaktadır.
+> 🔗 [**Hafta 3 İlerleme Videosu**](https://youtu.be/Yu5tpYA9Gg4)
 ---
 
 ## 👤 Geliştirici
