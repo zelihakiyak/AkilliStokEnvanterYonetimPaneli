@@ -1,12 +1,19 @@
 import axios from 'axios';
-
-const LOCAL_IP = '192.168.1.104';
-const PORT     = '5073';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const apiClient = axios.create({
-  baseURL: `http://${LOCAL_IP}:${PORT}/api`,
-  timeout: 10000,
-  headers: { 'Content-Type': 'application/json' },
+    baseURL: 'http://172.20.10.3:5073/api',
+    timeout: 10000,
+    headers: { 'Content-Type': 'application/json' },
+});
+
+// Her istekte token'ı otomatik ekler
+apiClient.interceptors.request.use(async (config) => {
+    const token = await AsyncStorage.getItem('userToken');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
 });
 
 export default apiClient;

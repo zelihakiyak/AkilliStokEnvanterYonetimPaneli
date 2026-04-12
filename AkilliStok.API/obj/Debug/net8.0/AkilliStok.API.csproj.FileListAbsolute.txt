@@ -282,10 +282,10 @@ C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\staticw
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\AkilliSt.93FB6FEC.Up2Date
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\AkilliStok.API.dll
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\refint\AkilliStok.API.dll
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\AkilliStok.API.pdb
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\AkilliStok.API.genruntimeconfig.cache
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\ref\AkilliStok.API.dll
+C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

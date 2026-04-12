@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\AkilliStok.API",
+    "\\AkilliStok.API\\Controllers",
+    "\\AkilliStokMobile",
+    "\\AkilliStokMobile\\src",
+    "\\AkilliStokMobile\\src\\api",
+    "\\AkilliStokMobile\\src\\context",
+    "\\AkilliStokMobile\\src\\screens"
+  ],
+  "SelectedNode": "\\AkilliStokMobile\\src\\screens\\LoginScreen.tsx",
+  "PreviewInSolutionExplorer": false
+}

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AkilliStok.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f131fd86c0357011cae217058587984a959a2eba")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+93dcfa50ec2b7bd9c50fa4961b99a8d6a89cc12d")]
 [assembly: System.Reflection.AssemblyProductAttribute("AkilliStok.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AkilliStok.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

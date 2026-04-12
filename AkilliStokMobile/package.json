@@ -1,23 +1,26 @@
 {
-  "name": "AkilliStokMobile",
+  "name": "akillistokmobile",
   "version": "0.0.1",
+  "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "lint": "eslint .",
-    "start": "react-native start",
+    "start": "expo start",
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native/new-app-screen": "0.84.1",
     "@react-navigation/native": "^7.2.2",
     "@react-navigation/native-stack": "^7.14.10",
     "axios": "^1.14.0",
-    "react": "19.2.3",
-    "react-native": "0.84.1",
-    "react-native-safe-area-context": "^5.7.0",
-    "react-native-screens": "^4.24.0"
+    "expo": "^55.0.14",
+    "react": "19.2.0",
+    "react-native": "0.83.4",
+    "react-native-safe-area-context": "~5.6.2",
+    "react-native-screens": "~4.23.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

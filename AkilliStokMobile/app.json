@@ -1,4 +1,10 @@
 {
-  "name": "AkilliStokMobile",
-  "displayName": "AkilliStokMobile"
+  "expo": {
+    "name": "AkilliStokMobile",
+    "slug": "akillistok-mobile",
+    "version": "1.0.0",
+    "android": {
+      "package": "com.zelihakiyak.akillistokmobile"
+    }
+  }
 }
