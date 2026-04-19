@@ -44,6 +44,16 @@ Bu hafta, uygulamaya kimlik doğrulama ve yetkilendirme altyapısı kazandırıl
   
 ---
 
+## 📌 4. Hafta Gelişmeleri
+Bu hafta, ürün yönetimine ilişkin tüm CRUD işlemleri hem backend hem de mobil uygulama tarafında tamamlanmış; vize teslimi kapsamındaki geliştirmeler hayata geçirilmiştir.
+
+* **ProductsController Tamamlandı:** Ürün güncelleme (`PUT`) ve silme (`DELETE`) endpoint'leri eklendi. Barkod ile tekil ürün sorgulama endpoint'i geliştirildi.
+* **Endpoint Güvenliği:** `[Authorize]` attribute'u ile tüm ürün endpoint'leri token korumasına alındı. Ürün ekleme, güncelleme ve silme işlemleri `[Authorize(Roles = "Admin")]` ile yalnızca Admin rolüyle kısıtlandı.
+* **AuthContext Genişletildi:** Kullanıcı bilgisi (`user`) AuthContext'e eklendi; token ile birlikte `AsyncStorage`'a kaydedilerek uygulama genelinde erişilebilir hale getirildi.
+* **Yeni Mobil Ekranlar:** `ProductsScreen` (listeleme, silme, kritik stok uyarısı), `AddProductScreen` (ürün ekleme formu) ve `EditProductScreen` (ürün güncelleme formu) ekranları geliştirildi.
+
+---
+
 ## 📺 Haftalık İlerleme Videoları
 
 ### 🔹 HAFTA 1 - Backend Altyapısı ve Veritabanı Mimarisi
@@ -57,6 +67,10 @@ Bu hafta, uygulamaya kimlik doğrulama ve yetkilendirme altyapısı kazandırıl
 ### 🔹 HAFTA 3 - JWT Kimlik Doğrulama ve Güvenli Oturum Yönetimi
 > **Açıklama:** JWT token entegrasyonu, rol bazlı yetkilendirme, AuthContext yapısı anlatılmaktadır.
 > 🔗 [**Hafta 3 İlerleme Videosu**](https://youtu.be/Yu5tpYA9Gg4)
+
+### 🔹 HAFTA 4 - Ürün Yönetimi ve API Entegrasyonu (Vize Teslimi)
+> **Açıklama:** Ürün listeleme, ekleme, güncelleme ve silme işlemlerinin backend ve mobil tarafta tamamlanması, rol bazlı yetkilendirme ve AuthContext genişletmesi anlatılmaktadır.
+> 🔗 [**Hafta 4 İlerleme Videosu**](https://www.youtube.com/watch?v=dwVNvVvgUQc)
 ---
 
 ## 👤 Geliştirici
