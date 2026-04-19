@@ -1,32 +1,47 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { AuthProvider, AuthContext } from './src/context/AuthContext';
-import { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './src/screens/LoginScreen.tsx';
-import HomeScreen from './src/screens/HomeScreen.tsx';
+import LoginScreen from './src/screens/LoginScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import ProductsScreen from './src/screens/ProductsScreen.tsx';
+import AddProductScreen from './src/screens/AddProductScreen.tsx';
+import EditProductScreen from './src/screens/EditProductScreen.tsx';
 
 export type RootStackParamList = {
   Login: undefined;
-  Home: { user: { id: number; fullName: string; email: string; role: string } };
+  Home: undefined;
+  Products: undefined;
+  AddProduct: undefined;
+  EditProduct: { product: {
+    id: number;
+    barcode: string;
+    productName: string;
+    unitPrice: number;
+    currentStock: number;
+    criticalLimit: number;
+    categoryId: number;
+  }};
 };
-
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function Navigation() {
     const { userToken, isLoading } = useContext(AuthContext);
 
-    if (isLoading) return null; // Veya bir Splash Screen gösterilebilir
+    if (isLoading) return null;
 
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 {userToken == null ? (
-                    // Giriþ yapýlmamýþsa sadece Login görünsün
                     <Stack.Screen name="Login" component={LoginScreen} />
                 ) : (
-                    // Giriþ yapýlmýþsa Home görünsün (Güvenlik için Login'e geri dönemez)
-                    <Stack.Screen name="Home" component={HomeScreen} />
+                    <>
+                        <Stack.Screen name="Home"       component={HomeScreen} />
+                        <Stack.Screen name="Products"   component={ProductsScreen} />
+                        <Stack.Screen name="AddProduct" component={AddProductScreen} />
+                        <Stack.Screen name="EditProduct" component={EditProductScreen} />
+                    </>
                 )}
             </Stack.Navigator>
         </NavigationContainer>
@@ -40,4 +55,3 @@ export default function App() {
         </AuthProvider>
     );
 }
-

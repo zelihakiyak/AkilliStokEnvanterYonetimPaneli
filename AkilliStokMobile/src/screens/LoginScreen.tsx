@@ -12,7 +12,7 @@ type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
 };
 
-export default function LoginScreen({ navigation }: Props) {
+export default function LoginScreen({ navigation: _navigation }: Props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -31,16 +31,18 @@ export default function LoginScreen({ navigation }: Props) {
             const userData = response.data;
 
             if (userData.token) {
-                await login(userData.token);
-                navigation.replace('Home', { user: userData });
+                await login(userData.token, userData);
+                
             } else {
                 Alert.alert('Hata', 'Sunucudan geçerli bir token alınamadı.');
             }
 
         } catch (error: any) {
+            console.log('LOGIN HATA:', error.response?.status, error.response?.data, error.message);
             const msg = error.response?.data?.message || 'Sunucuya bağlanılamadı.';
             Alert.alert('Giriş Hatası', msg);
-        } finally {
+        }
+        finally {
             setLoading(false);
         }
     };

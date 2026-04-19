@@ -144,7 +144,6 @@ C:\Users\ASUS\source\repos\AkilliStok.API\obj\Debug\net8.0\AkilliStok.API.pdb
 C:\Users\ASUS\source\repos\AkilliStok.API\obj\Debug\net8.0\AkilliStok.API.genruntimeconfig.cache
 C:\Users\ASUS\source\repos\AkilliStok.API\obj\Debug\net8.0\ref\AkilliStok.API.dll
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\bin\Debug\net8.0\appsettings.Development.json
-C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\bin\Debug\net8.0\appsettings.json
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\bin\Debug\net8.0\AkilliStok.API.staticwebassets.endpoints.json
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\bin\Debug\net8.0\AkilliStok.API.exe
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\bin\Debug\net8.0\AkilliStok.API.deps.json
@@ -289,3 +288,4 @@ C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\AkilliS
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\AkilliStok.API.genruntimeconfig.cache
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\obj\Debug\net8.0\ref\AkilliStok.API.dll
 C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\ASUS\source\repos\AkilliStokApp\AkilliStok.API\bin\Debug\net8.0\appsettings.json

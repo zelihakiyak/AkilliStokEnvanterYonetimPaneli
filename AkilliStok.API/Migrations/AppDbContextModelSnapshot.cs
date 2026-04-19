@@ -104,7 +104,6 @@ namespace AkilliStok.API.Migrations
                     b.ToTable("StockLogs");
                 });
 
-<<<<<<< HEAD
             modelBuilder.Entity("AkilliStok.API.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -134,8 +133,6 @@ namespace AkilliStok.API.Migrations
                     b.ToTable("Users");
                 });
 
-=======
->>>>>>> f131fd86c0357011cae217058587984a959a2eba
             modelBuilder.Entity("AkilliStok.API.Models.Product", b =>
                 {
                     b.HasOne("AkilliStok.API.Models.Category", "Category")

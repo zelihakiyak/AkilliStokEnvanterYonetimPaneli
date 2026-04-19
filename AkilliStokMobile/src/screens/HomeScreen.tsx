@@ -1,39 +1,45 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../App';
+import { AuthContext } from '../context/AuthContext';
 
-type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
-  route: RouteProp<RootStackParamList, 'Home'>;
-};
+const menuItems = [
+  { label: 'Ürünler',          screen: 'Products' },
+  { label: 'Kategoriler',      screen: null },
+  { label: 'Stok Hareketleri', screen: null },
+  { label: 'Raporlar',         screen: null },
+];
 
-export default function HomeScreen({ navigation, route }: Props) {
-  const { user } = route.params;
+export default function HomeScreen({ navigation }: any) {
+    const { user, logout } = useContext(AuthContext);
+
+    const handleLogout = async () => { await logout(); };
+
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Hoş geldiniz,</Text>
-        <Text style={styles.name}>{user.fullName}</Text>
+        <Text style={styles.name}>{user?.fullName}</Text>
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>{user.role}</Text>
+          <Text style={styles.badgeText}>{user?.role}</Text>
         </View>
       </View>
 
       <View style={styles.grid}>
-        {['Ürünler', 'Kategoriler', 'Stok Hareketleri', 'Raporlar'].map(item => (
-          <TouchableOpacity key={item} style={styles.card} activeOpacity={0.7}>
-            <Text style={styles.cardText}>{item}</Text>
+        {menuItems.map(item => (
+          <TouchableOpacity
+            key={item.label}
+            style={[styles.card, !item.screen && styles.cardDisabled]}
+            activeOpacity={item.screen ? 0.7 : 1}
+            onPress={() => item.screen && navigation.navigate(item.screen as any)}
+          >
+            <Text style={styles.cardText}>{item.label}</Text>
+            {!item.screen && <Text style={styles.comingSoon}>Yakında</Text>}
           </TouchableOpacity>
         ))}
       </View>
 
-      <TouchableOpacity
-        style={styles.logoutBtn}
-        onPress={() => navigation.replace('Login')}
-      >
+      <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
         <Text style={styles.logoutText}>Çıkış Yap</Text>
       </TouchableOpacity>
     </View>
@@ -58,7 +64,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     marginTop: 8,
   },
-  badgeText: { color: '#fff', fontSize: 12, fontWeight: '600' },
+  badgeText:   { color: '#fff', fontSize: 12, fontWeight: '600' },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -76,7 +82,9 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
-  cardText: { fontSize: 14, fontWeight: '600', color: '#374151' },
+  cardDisabled: { opacity: 0.5 },
+  cardText:     { fontSize: 14, fontWeight: '600', color: '#374151' },
+  comingSoon:   { fontSize: 10, color: '#9CA3AF', marginTop: 4 },
   logoutBtn: {
     borderWidth: 1,
     borderColor: '#EF4444',
