@@ -1,23 +1,76 @@
 import React from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './src/screens/LoginScreen.tsx';
-import HomeScreen from './src/screens/HomeScreen.tsx';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
+
+import LoginScreen       from './src/screens/LoginScreen';
+import DashboardScreen   from './src/screens/DashboardScreen';
+import UrunListesiScreen from './src/screens/UrunListesiScreen';
+import UrunDetayScreen   from './src/screens/UrunDetayScreen';
+import BarkodTaraScreen  from './src/screens/BarkodTaraScreen';
+import StokHareketScreen from './src/screens/StokHareketScreen';
+import AddProductScreen  from './src/screens/AddProductScreen';
+import EditProductScreen from './src/screens/EditProductScreen';
+
+export type UserType = {
+  id: number; fullName: string; email: string; role: string;
+};
+
+export type ProductType = {
+  id: number; productName: string; barcode: string;
+  unitPrice: number; currentStock: number; criticalLimit: number; categoryId: number;
+};
 
 export type RootStackParamList = {
-  Login: undefined;
-  Home: { user: { id: number; fullName: string; email: string; role: string } };
+  Login:       undefined;
+  Home:        { user: UserType };
+  UrunListesi: undefined;
+  UrunDetay:   { product: ProductType };
+  BarkodTara:  undefined;
+  StokHareket: { barcode?: string; productName?: string } | undefined;
+  AddProduct:  undefined;
+  EditProduct: { product: ProductType };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+function RootNavigator() {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F6FA' }}>
+        <ActivityIndicator size="large" color="#4338CA" />
+      </View>
+    );
+  }
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {user ? (
+        <>
+          <Stack.Screen name="Home"        component={DashboardScreen} />
+          <Stack.Screen name="UrunListesi" component={UrunListesiScreen} />
+          <Stack.Screen name="UrunDetay"   component={UrunDetayScreen} />
+          <Stack.Screen name="BarkodTara"  component={BarkodTaraScreen} />
+          <Stack.Screen name="StokHareket" component={StokHareketScreen} />
+          <Stack.Screen name="AddProduct"  component={AddProductScreen} />
+          <Stack.Screen name="EditProduct" component={EditProductScreen} />
+        </>
+      ) : (
+        <Stack.Screen name="Login" component={LoginScreen} />
+      )}
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home"  component={HomeScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <RootNavigator />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
