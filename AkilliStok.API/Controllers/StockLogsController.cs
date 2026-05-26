@@ -1,7 +1,8 @@
-﻿using AkilliStok.API.Data;
+using AkilliStok.API.Data;
 using AkilliStok.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -15,18 +16,36 @@ public class StockLogsController : ControllerBase
         _context = context;
     }
 
-    // Stok Hareketi 
+    // GET: api/StockLogs — tüm hareketleri tarihe göre azalan sırada döndür
+    [HttpGet]
+    public async Task<IActionResult> GetStockLogs()
+    {
+        var logs = await _context.StockLogs
+            .Include(l => l.Product)
+            .OrderByDescending(l => l.TransactionDate)
+            .Select(l => new
+            {
+                l.Id,
+                ProductName     = l.Product != null ? l.Product.ProductName : "Bilinmiyor",
+                l.TransactionType,
+                Quantity        = l.QuantityChanged,
+                l.TransactionDate
+            })
+            .ToListAsync();
+
+        return Ok(logs);
+    }
+
+    // POST: api/StockLogs — yeni stok hareketi ekle
     [HttpPost]
     public async Task<IActionResult> PostStockLog(StockLog log)
     {
-        // 1. Log Kaydını Ekle
         _context.StockLogs.Add(log);
 
-        // 2. Ürünün Mevcut Stoğunu Güncelle
         var product = await _context.Products.FindAsync(log.ProductId);
         if (product != null)
         {
-            product.CurrentStock += log.QuantityChanged; 
+            product.CurrentStock += log.QuantityChanged;
         }
 
         await _context.SaveChangesAsync();

@@ -132,7 +132,7 @@ export default function UrunListesiScreen({ navigation }: Props) {
           )}
         </View>
         <TouchableOpacity style={s.filterBtn}>
-          <Text style={s.filterBtnIcon}>⊟</Text>
+          <Text style={s.filterBtnIcon}>🀫</Text>
         </TouchableOpacity>
       </View>
 
@@ -182,12 +182,12 @@ export default function UrunListesiScreen({ navigation }: Props) {
         {(['Panel', 'Envanter', 'SCAN', 'Raporlar', 'Ayarlar'] as const).map(key => {
           const isScan   = key === 'SCAN';
           const isActive = key === 'Envanter';
-          const ICONS: Record<string, string>  = { Panel: '⊞', Envanter: '📦', SCAN: '⊟', Raporlar: '📊', Ayarlar: '⚙️' };
+          const ICONS: Record<string, string>  = { Panel: '🏠︎', Envanter: '📦', SCAN: '🀫', Raporlar: '📊', Ayarlar: '⚙️' };
           const LABELS: Record<string, string> = { Panel: 'Panel', Envanter: 'Envanter', SCAN: 'Tara', Raporlar: 'Raporlar', Ayarlar: 'Ayarlar' };
           if (isScan) {
             return (
               <TouchableOpacity key={key} style={s.scanBtn} onPress={() => navigation.navigate('BarkodTara')} activeOpacity={0.85}>
-                <Text style={s.scanIcon}>⊟</Text>
+                <Text style={s.scanIcon}>🀫</Text>
               </TouchableOpacity>
             );
           }

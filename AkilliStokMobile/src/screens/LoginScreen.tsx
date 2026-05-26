@@ -54,7 +54,7 @@ export default function LoginScreen() {
           </View>
 
           {/* Başlık */}
-          <Text style={styles.title}>Kurumsal Envanter</Text>
+          <Text style={styles.title}>Envanter Yönetim Sistemi</Text>
           <Text style={styles.subtitle}>Devam etmek için giriş yapın</Text>
 
           {/* E-posta */}

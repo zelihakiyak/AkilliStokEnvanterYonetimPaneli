@@ -434,3 +434,4 @@ C:\Users\ASUS\Desktop\AkilliStokEnvanterYonetimPaneli\AkilliStok.API\obj\Debug\n
 C:\Users\ASUS\Desktop\AkilliStokEnvanterYonetimPaneli\AkilliStok.API\obj\Debug\net8.0\AkilliStok.API.pdb
 C:\Users\ASUS\Desktop\AkilliStokEnvanterYonetimPaneli\AkilliStok.API\obj\Debug\net8.0\AkilliStok.API.genruntimeconfig.cache
 C:\Users\ASUS\Desktop\AkilliStokEnvanterYonetimPaneli\AkilliStok.API\obj\Debug\net8.0\ref\AkilliStok.API.dll
+C:\Users\ASUS\Desktop\AkilliStokEnvanterYonetimPaneli\AkilliStok.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

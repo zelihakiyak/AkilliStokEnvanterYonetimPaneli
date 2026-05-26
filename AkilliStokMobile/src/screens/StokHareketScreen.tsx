@@ -163,7 +163,7 @@ export default function StokHareketScreen({ navigation, route }: Props) {
             >
               {searching
                 ? <ActivityIndicator color={PRIMARY} size="small" />
-                : <Text style={s.barcodeSearchIcon}>⊟</Text>
+                : <Text style={s.barcodeSearchIcon}>🀫</Text>
               }
             </TouchableOpacity>
           </View>

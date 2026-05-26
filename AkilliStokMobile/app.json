@@ -1,4 +1,19 @@
 {
-  "name": "AkilliStokMobile",
-  "displayName": "AkilliStokMobile"
+  "expo": {
+    "name": "AkilliStokMobile",
+    "slug": "akillistokmobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "sdkVersion": "54.0.0",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#4338CA"
+      }
+    },
+    "newArchEnabled": false
+  }
 }
