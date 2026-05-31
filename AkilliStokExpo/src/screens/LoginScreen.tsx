@@ -91,7 +91,7 @@ export default function LoginScreen() {
               onChangeText={setPassword}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <Text style={styles.eyeIcon}>{showPassword ? '●' : '○'}</Text>
+              <Text style={styles.eyeIcon}>{showPassword ?  '🙈' : '👁'}</Text>
             </TouchableOpacity>
           </View>
 

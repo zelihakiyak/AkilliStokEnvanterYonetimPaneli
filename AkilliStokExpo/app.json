@@ -13,7 +13,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Barkod tarama için kamera erişimi gereklidir."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -21,8 +24,17 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["android.permission.CAMERA"]
     },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Barkod tarama için kamera erişimi gereklidir."
+        }
+      ]
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     }

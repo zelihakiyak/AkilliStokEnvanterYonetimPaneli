@@ -4,18 +4,22 @@ import {
   ScrollView, KeyboardAvoidingView, Platform, Alert, ActivityIndicator,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 import apiClient from '../api/apiClient';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'AddProduct'>;
+  route:      RouteProp<RootStackParamList, 'AddProduct'>;
 };
 
 type Category = { id: number; name: string };
 
-export default function AddProductScreen({ navigation }: Props) {
+export default function AddProductScreen({ navigation, route }: Props) {
+  const prefillBarcode = route.params?.barcode ?? '';
+
   const [productName,   setProductName]   = useState('');
-  const [barcode,       setBarcode]       = useState('');
+  const [barcode,       setBarcode]       = useState(prefillBarcode);
   const [unitPrice,     setUnitPrice]     = useState('');
   const [currentStock,  setCurrentStock]  = useState('');
   const [criticalLimit, setCriticalLimit] = useState('10');
@@ -79,7 +83,18 @@ export default function AddProductScreen({ navigation }: Props) {
 
           {/* Barkod */}
           <Text style={s.label}>Barkod *</Text>
-          <TextInput style={s.input} value={barcode} onChangeText={setBarcode} placeholder="Barkod numarası" placeholderTextColor="#94A3B8" keyboardType="default" />
+          <TextInput
+            style={[s.input, prefillBarcode ? s.inputLocked : undefined]}
+            value={barcode}
+            onChangeText={setBarcode}
+            placeholder="Barkod numarası"
+            placeholderTextColor="#94A3B8"
+            keyboardType="default"
+            editable={!prefillBarcode}
+          />
+          {prefillBarcode ? (
+            <Text style={s.lockedHint}>📷 Barkod kameradan okundu, değiştirilemez.</Text>
+          ) : null}
 
           {/* Birim Fiyat */}
           <Text style={s.label}>Birim Fiyat (₺) *</Text>
@@ -151,4 +166,6 @@ const s = StyleSheet.create({
   saveBtn: { backgroundColor: PRIMARY, borderRadius: 16, height: 56, alignItems: 'center', justifyContent: 'center', shadowColor: PRIMARY, shadowOpacity: 0.35, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 6 },
   saveBtnDisabled: { backgroundColor: '#94A3B8', shadowOpacity: 0 },
   saveBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  inputLocked: { backgroundColor: '#F1F5F9', color: '#64748B', borderColor: '#CBD5E1' },
+  lockedHint:  { fontSize: 11, color: '#64748B', marginTop: -8, marginBottom: 12, marginLeft: 4 },
 });

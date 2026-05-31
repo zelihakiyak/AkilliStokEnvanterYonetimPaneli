@@ -156,7 +156,7 @@ export default function UrunDetayScreen({ navigation, route }: Props) {
       <View style={s.tabBar}>
         {(['Panel', 'Envanter', 'SCAN', 'Raporlar', 'Ayarlar'] as const).map(key => {
           const isScan = key === 'SCAN';
-          const ICONS: Record<string, string>  = { Panel: '⊞', Envanter: '📦', SCAN: '🀫', Raporlar: '📊', Ayarlar: '⚙️' };
+          const ICONS: Record<string, string>  = { Panel: '🏠︎', Envanter: '📦', SCAN: '🀫', Raporlar: '📊', Ayarlar: '⚙️' };
           const LABELS: Record<string, string> = { Panel: 'Panel', Envanter: 'Envanter', SCAN: 'Tara', Raporlar: 'Raporlar', Ayarlar: 'Ayarlar' };
           if (isScan) {
             return (

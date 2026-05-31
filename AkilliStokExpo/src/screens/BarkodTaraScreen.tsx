@@ -270,7 +270,7 @@ export default function BarkodTaraScreen({ navigation }: Props) {
               </>
             ) : (
               <>
-                <Text style={s.emptyIcon}>⊟</Text>
+                <Text style={s.emptyIcon}>🀫</Text>
                 <Text style={s.emptyTitle}>Barkod tarayın ya da girin</Text>
                 <Text style={s.emptyText}>
                   Yukarıdaki alana barkod numarası yazıp "Ara"ya basın.

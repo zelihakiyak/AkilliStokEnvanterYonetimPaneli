@@ -29,6 +29,8 @@ public class StockLogsController : ControllerBase
                 ProductName     = l.Product != null ? l.Product.ProductName : "Bilinmiyor",
                 l.TransactionType,
                 Quantity        = l.QuantityChanged,
+                l.OldStock,
+                l.NewStock,
                 l.TransactionDate
             })
             .ToListAsync();
@@ -40,15 +42,23 @@ public class StockLogsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> PostStockLog(StockLog log)
     {
-        _context.StockLogs.Add(log);
-
         var product = await _context.Products.FindAsync(log.ProductId);
-        if (product != null)
-        {
-            product.CurrentStock += log.QuantityChanged;
-        }
+        if (product == null)
+            return NotFound(new { message = "Ürün bulunamadı." });
 
+        // İşlem öncesi ve sonrası stok değerlerini kaydet
+        log.OldStock = product.CurrentStock;
+        product.CurrentStock += log.QuantityChanged;
+        log.NewStock = product.CurrentStock;
+
+        _context.StockLogs.Add(log);
         await _context.SaveChangesAsync();
-        return Ok(new { message = "Stok güncellendi.", newStock = product?.CurrentStock });
+
+        return Ok(new
+        {
+            message  = "Stok güncellendi.",
+            oldStock = log.OldStock,
+            newStock = log.NewStock
+        });
     }
 }

@@ -29,7 +29,7 @@ export type RootStackParamList = {
   UrunDetay:   { product: ProductType };
   BarkodTara:  undefined;
   StokHareket: { barcode?: string; productName?: string } | undefined;
-  AddProduct:  undefined;
+  AddProduct:  { barcode?: string } | undefined;
   EditProduct: { product: ProductType };
 };
 
