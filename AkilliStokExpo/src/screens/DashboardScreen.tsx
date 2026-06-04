@@ -8,7 +8,9 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
+  Dimensions,
 } from 'react-native';
+import { PieChart, BarChart } from 'react-native-chart-kit';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, ProductType } from '../../App';
 import { useAuth } from '../context/AuthContext';
@@ -26,63 +28,67 @@ type StockLogType = {
   transactionDate: string;
 };
 
-function MiniBarChart({ products }: { products: ProductType[] }) {
-  if (products.length === 0) return null;
-  const top5 = [...products].sort((a, b) => b.currentStock - a.currentStock).slice(0, 5);
-  const maxStock = Math.max(...top5.map(p => p.currentStock), 1);
-  return (
-    <View style={chart.container}>
-      {top5.map((p) => {
-        const heightPct = (p.currentStock / maxStock) * 100;
-        const isLow = p.currentStock <= p.criticalLimit;
-        return (
-          <View key={p.id} style={chart.barWrapper}>
-            <Text style={chart.value}>{p.currentStock}</Text>
-            <View style={chart.barBg}>
-              <View style={[chart.bar, { height: `${Math.max(heightPct, 5)}%` as any }, isLow && chart.barLow]} />
-            </View>
-            <Text style={chart.label} numberOfLines={2}>
-              {p.productName.length > 8 ? p.productName.slice(0, 8) + '…' : p.productName}
-            </Text>
-          </View>
-        );
-      })}
-    </View>
-  );
-}
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CHART_WIDTH  = SCREEN_WIDTH - 48;
 
-const chart = StyleSheet.create({
-  container:  { flexDirection: 'row', alignItems: 'flex-end', height: 120, gap: 6, paddingTop: 8 },
-  barWrapper: { flex: 1, alignItems: 'center', gap: 4 },
-  value:      { fontSize: 9, color: '#64748B', fontWeight: '600' },
-  barBg:      { flex: 1, width: '80%', justifyContent: 'flex-end' },
-  bar:        { width: '100%', backgroundColor: '#4338CA', borderRadius: 4 },
-  barLow:     { backgroundColor: '#EF4444' },
-  label:      { fontSize: 9, color: '#64748B', textAlign: 'center' },
-});
+const PIE_COLORS = ['#4338CA','#6366F1','#818CF8','#A5B4FC','#C7D2FE'];
 
 export default function DashboardScreen({ navigation }: Props) {
   const { user, logout, isAdmin } = useAuth();
-  const [products,   setProducts]   = useState<ProductType[]>([]);
-  const [recentLogs, setRecentLogs] = useState<StockLogType[]>([]);
-  const [loading,    setLoading]    = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [products,    setProducts]    = useState<ProductType[]>([]);
+  const [recentLogs,  setRecentLogs]  = useState<StockLogType[]>([]);
+  const [categoryCount, setCategoryCount] = useState(0);
+  const [loading,     setLoading]    = useState(true);
+  const [refreshing,  setRefreshing]  = useState(false);
 
   const stats = React.useMemo(() => {
     const lowStockCount = products.filter(p => p.currentStock <= p.criticalLimit).length;
     const totalValue    = products.reduce((sum, p) => sum + p.unitPrice * p.currentStock, 0);
-    const categoryIds   = new Set(products.map(p => p.categoryId));
-    return { totalProducts: products.length, lowStockCount, totalValue, totalCategories: categoryIds.size };
+    return { totalProducts: products.length, lowStockCount, totalValue, totalCategories: categoryCount };
+  }, [products, categoryCount]);
+
+  // ── En çok satılan ürünler (Pie) ────────────────────────────────────────
+  const pieData = React.useMemo(() => {
+    const outLogs = recentLogs.filter(l => l.transactionType === 'Out' || l.transactionType === 'Çıkış');
+    const grouped: Record<string, number> = {};
+    outLogs.forEach(l => {
+      grouped[l.productName] = (grouped[l.productName] || 0) + Math.abs(l.quantity);
+    });
+    const sorted = Object.entries(grouped)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    if (sorted.length === 0) return [];
+    return sorted.map(([name, count], i) => ({
+      name: name.length > 10 ? name.slice(0, 10) + '…' : name,
+      population: count,
+      color: PIE_COLORS[i % PIE_COLORS.length],
+      legendFontColor: '#64748B',
+      legendFontSize: 11,
+    }));
+  }, [recentLogs]);
+
+  // ── Kritik stok bar grafiği ──────────────────────────────────────────────
+  const barData = React.useMemo(() => {
+    const critical = products
+      .filter(p => p.currentStock <= p.criticalLimit)
+      .slice(0, 6);
+    if (critical.length === 0) return null;
+    return {
+      labels: critical.map(p => p.productName.length > 7 ? p.productName.slice(0, 7) + '…' : p.productName),
+      datasets: [{ data: critical.map(p => p.currentStock) }],
+    };
   }, [products]);
 
   const fetchData = useCallback(async () => {
     try {
-      const [prodRes, logRes] = await Promise.all([
+      const [prodRes, logRes, catRes] = await Promise.all([
         apiClient.get('/Products'),
         apiClient.get('/StockLogs'),
+        apiClient.get('/Categories'),
       ]);
       setProducts(prodRes.data);
-      setRecentLogs((logRes.data as StockLogType[]).slice(0, 5));
+      setRecentLogs(logRes.data as StockLogType[]);
+      setCategoryCount(catRes.data.length);
     } catch {
       Alert.alert('Bağlantı Hatası', 'Veriler yüklenemedi.');
     } finally {
@@ -109,6 +115,15 @@ export default function DashboardScreen({ navigation }: Props) {
   }
 
   const lowStockProducts = products.filter(p => p.currentStock <= p.criticalLimit);
+  const chartConfig = {
+    backgroundGradientFrom: '#ffffff',
+    backgroundGradientTo:   '#ffffff',
+    color: (opacity = 1) => `rgba(67, 56, 202, ${opacity})`,
+    labelColor: () => '#64748B',
+    strokeWidth: 2,
+    barPercentage: 0.6,
+    decimalPlaces: 0,
+  };
 
   return (
     <View style={s.root}>
@@ -116,6 +131,7 @@ export default function DashboardScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchData(); }} tintColor="#4338CA" />}
       >
+        {/* Header */}
         <View style={s.header}>
           <View style={s.headerLeft}>
             <View style={s.logoBox}>
@@ -131,6 +147,7 @@ export default function DashboardScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
 
+        {/* İstatistik Kartları */}
         <View style={s.statsGrid}>
           <View style={[s.statCard, { backgroundColor: '#4338CA' }]}>
             <Text style={s.statIcon}>📦</Text>
@@ -156,6 +173,7 @@ export default function DashboardScreen({ navigation }: Props) {
           </View>
         </View>
 
+        {/* Hızlı Erişim */}
         <View style={s.section}>
           <Text style={s.sectionTitle}>Hızlı Erişim</Text>
           <View style={s.quickRow}>
@@ -164,7 +182,7 @@ export default function DashboardScreen({ navigation }: Props) {
               <Text style={s.quickLabel}>Ürün Listesi</Text>
             </TouchableOpacity>
             <TouchableOpacity style={s.quickCard} onPress={() => navigation.navigate('BarkodTara')} activeOpacity={0.75}>
-              <Text style={s.quickIcon}>🀫</Text>
+              <Text style={s.quickIcon}>📷</Text>
               <Text style={s.quickLabel}>Barkod Tara</Text>
             </TouchableOpacity>
             <TouchableOpacity style={s.quickCard} onPress={() => navigation.navigate('StokHareket')} activeOpacity={0.75}>
@@ -180,22 +198,53 @@ export default function DashboardScreen({ navigation }: Props) {
           </View>
         </View>
 
+        {/* En Çok Satılan Ürünler — Pasta Grafik */}
         <View style={s.section}>
-          <View style={s.sectionRow}>
-            <Text style={s.sectionTitle}>Stok Durumu</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('UrunListesi')}>
-              <Text style={s.seeAll}>Tümünü Gör →</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={s.sectionTitle}>En Çok Satılan Ürünler</Text>
           <View style={s.card}>
-            <MiniBarChart products={products} />
-            {products.length === 0 && <Text style={s.empty}>Henüz ürün eklenmemiş.</Text>}
+            {pieData.length > 0 ? (
+              <PieChart
+                data={pieData}
+                width={CHART_WIDTH}
+                height={180}
+                chartConfig={chartConfig}
+                accessor="population"
+                backgroundColor="transparent"
+                paddingLeft="8"
+                absolute={false}
+              />
+            ) : (
+              <Text style={s.empty}>Henüz stok çıkış hareketi yok.</Text>
+            )}
           </View>
         </View>
 
+        {/* Kritik Stok Durumu — Bar Grafik */}
+        <View style={s.section}>
+          <Text style={s.sectionTitle}>⚠️ Kritik Stok Seviyeleri</Text>
+          <View style={s.card}>
+            {barData ? (
+              <BarChart
+                data={barData}
+                width={CHART_WIDTH}
+                height={200}
+                chartConfig={chartConfig}
+                fromZero
+                showValuesOnTopOfBars
+                yAxisLabel=""
+                yAxisSuffix=" ad"
+                style={{ borderRadius: 8 }}
+              />
+            ) : (
+              <Text style={s.empty}>Kritik stok seviyesinde ürün yok. 🎉</Text>
+            )}
+          </View>
+        </View>
+
+        {/* Düşük Stok Uyarıları */}
         {lowStockProducts.length > 0 && (
           <View style={s.section}>
-            <Text style={s.sectionTitle}>⚠️ Düşük Stok Uyarıları</Text>
+            <Text style={s.sectionTitle}>Düşük Stok Uyarıları</Text>
             <View style={s.card}>
               {lowStockProducts.slice(0, 4).map(p => (
                 <TouchableOpacity
@@ -216,23 +265,24 @@ export default function DashboardScreen({ navigation }: Props) {
           </View>
         )}
 
+        {/* Son Stok Hareketleri */}
         <View style={[s.section, { marginBottom: 90 }]}>
           <Text style={s.sectionTitle}>Son Stok Hareketleri</Text>
           <View style={s.card}>
             {recentLogs.length === 0 ? (
               <Text style={s.empty}>Henüz stok hareketi yok.</Text>
             ) : (
-              recentLogs.map(log => (
+              recentLogs.slice(0, 5).map(log => (
                 <View key={log.id} style={s.logRow}>
-                  <View style={[s.logBadge, log.transactionType === 'Giriş' ? s.logBadgeIn : s.logBadgeOut]}>
-                    <Text style={s.logBadgeText}>{log.transactionType === 'Giriş' ? '↑' : '↓'}</Text>
+                  <View style={[s.logBadge, log.transactionType === 'In' ? s.logBadgeIn : s.logBadgeOut]}>
+                    <Text style={s.logBadgeText}>{log.transactionType === 'In' ? '↑' : '↓'}</Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={s.logName} numberOfLines={1}>{log.productName}</Text>
                     <Text style={s.logDate}>{new Date(log.transactionDate).toLocaleDateString('tr-TR')}</Text>
                   </View>
-                  <Text style={[s.logQty, log.transactionType === 'Giriş' ? s.logQtyIn : s.logQtyOut]}>
-                    {log.transactionType === 'Giriş' ? '+' : '-'}{log.quantity}
+                  <Text style={[s.logQty, log.transactionType === 'In' ? s.logQtyIn : s.logQtyOut]}>
+                    {log.transactionType === 'In' ? '+' : '-'}{Math.abs(log.quantity)}
                   </Text>
                 </View>
               ))
@@ -241,21 +291,25 @@ export default function DashboardScreen({ navigation }: Props) {
         </View>
       </ScrollView>
 
+      {/* Tab Bar */}
       <View style={s.tabBar}>
         {(['Panel', 'Envanter', 'SCAN', 'Raporlar', 'Ayarlar'] as const).map(key => {
           const isScan   = key === 'SCAN';
           const isActive = key === 'Panel';
-          const ICONS: Record<string, string>  = { Panel: '🏠︎', Envanter: '📦', SCAN: '🀫', Raporlar: '📊', Ayarlar: '⚙️' };
+          const ICONS: Record<string, string>  = { Panel: '🏠', Envanter: '📦', SCAN: '📷', Raporlar: '📊', Ayarlar: '⚙️' };
           const LABELS: Record<string, string> = { Panel: 'Panel', Envanter: 'Envanter', SCAN: 'Tara', Raporlar: 'Raporlar', Ayarlar: 'Ayarlar' };
           if (isScan) {
             return (
               <TouchableOpacity key={key} style={s.scanBtn} onPress={() => navigation.navigate('BarkodTara')} activeOpacity={0.85}>
-                <Text style={s.scanIcon}>🀫</Text>
+                <Text style={s.scanIcon}>📷</Text>
               </TouchableOpacity>
             );
           }
           return (
-            <TouchableOpacity key={key} style={s.tabItem} onPress={() => { if (key === 'Envanter') navigation.navigate('UrunListesi'); }} activeOpacity={0.7}>
+            <TouchableOpacity key={key} style={s.tabItem} onPress={() => {
+              if (key === 'Envanter') navigation.navigate('UrunListesi');
+              if (key === 'Raporlar') navigation.navigate('Raporlar');
+            }} activeOpacity={0.7}>
               <Text style={[s.tabIcon, isActive && s.tabIconActive]}>{ICONS[key]}</Text>
               <Text style={[s.tabLabel, isActive && s.tabLabelActive]}>{LABELS[key]}</Text>
             </TouchableOpacity>
@@ -287,9 +341,7 @@ const s = StyleSheet.create({
   statValue:    { fontSize: 22, fontWeight: '800', color: WHITE },
   statLabel:    { fontSize: 11, color: 'rgba(255,255,255,0.8)', fontWeight: '500' },
   section:      { paddingHorizontal: 16, marginTop: 20 },
-  sectionRow:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   sectionTitle: { fontSize: 16, fontWeight: '700', color: '#1E293B', marginBottom: 12 },
-  seeAll:       { fontSize: 13, color: PRIMARY, fontWeight: '600' },
   card:         { backgroundColor: WHITE, borderRadius: 16, padding: 16, shadowColor: '#000', shadowOpacity: 0.04, shadowOffset: { width: 0, height: 2 }, shadowRadius: 8, elevation: 2 },
   quickRow:     { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   quickCard:    { width: '47%', backgroundColor: WHITE, borderRadius: 14, padding: 16, alignItems: 'center', gap: 8, shadowColor: '#000', shadowOpacity: 0.04, shadowOffset: { width: 0, height: 2 }, shadowRadius: 6, elevation: 2 },

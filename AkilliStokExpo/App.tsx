@@ -12,6 +12,7 @@ import BarkodTaraScreen  from './src/screens/BarkodTaraScreen';
 import StokHareketScreen from './src/screens/StokHareketScreen';
 import AddProductScreen  from './src/screens/AddProductScreen';
 import EditProductScreen from './src/screens/EditProductScreen';
+import RaporlarScreen   from './src/screens/RaporlarScreen';
 
 export type UserType = {
   id: number; fullName: string; email: string; role: string;
@@ -31,6 +32,7 @@ export type RootStackParamList = {
   StokHareket: { barcode?: string; productName?: string } | undefined;
   AddProduct:  { barcode?: string } | undefined;
   EditProduct: { product: ProductType };
+  Raporlar:    undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -57,6 +59,7 @@ function RootNavigator() {
           <Stack.Screen name="StokHareket" component={StokHareketScreen} />
           <Stack.Screen name="AddProduct"  component={AddProductScreen} />
           <Stack.Screen name="EditProduct" component={EditProductScreen} />
+          <Stack.Screen name="Raporlar"    component={RaporlarScreen} />
         </>
       ) : (
         <Stack.Screen name="Login" component={LoginScreen} />

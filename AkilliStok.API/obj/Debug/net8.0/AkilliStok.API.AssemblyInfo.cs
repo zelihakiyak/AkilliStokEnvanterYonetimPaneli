@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AkilliStok.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+145afff9fabe57366c1f0b58a3bf92721ae0b76e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+71f640a714000ddfd65bb89794dbd4dbf862a9f5")]
 [assembly: System.Reflection.AssemblyProductAttribute("AkilliStok.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AkilliStok.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

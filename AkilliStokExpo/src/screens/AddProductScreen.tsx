@@ -7,31 +7,54 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 import apiClient from '../api/apiClient';
+import { useAuth } from '../context/AuthContext';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'AddProduct'>;
   route:      RouteProp<RootStackParamList, 'AddProduct'>;
 };
 
-type Category = { id: number; name: string };
+type Category = { id: number; categoryName: string };
 
 export default function AddProductScreen({ navigation, route }: Props) {
   const prefillBarcode = route.params?.barcode ?? '';
+
+  const { token } = useAuth();
 
   const [productName,   setProductName]   = useState('');
   const [barcode,       setBarcode]       = useState(prefillBarcode);
   const [unitPrice,     setUnitPrice]     = useState('');
   const [currentStock,  setCurrentStock]  = useState('');
   const [criticalLimit, setCriticalLimit] = useState('10');
-  const [categoryId,    setCategoryId]    = useState<number | null>(null);
-  const [categories,    setCategories]    = useState<Category[]>([]);
-  const [saving,        setSaving]        = useState(false);
+  const [categoryId,     setCategoryId]    = useState<number | null>(null);
+  const [categoryText,   setCategoryText]  = useState('');
+  const [categories,     setCategories]    = useState<Category[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [saving,         setSaving]        = useState(false);
+
+  const filteredCategories = categories.filter(c => {
+    const categoryNameSafe = c?.categoryName || '';
+    const searchTextSafe = categoryText || '';
+    return categoryNameSafe.toLowerCase().includes(searchTextSafe.toLowerCase());
+  });
 
   useEffect(() => {
-    apiClient.get<Category[]>('/Categories')
-      .then(r => setCategories(r.data))
-      .catch(() => {});
-  }, []);
+      if (!token) return; 
+
+      apiClient.get<Category[]>('/Categories', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(r => {
+        if (Array.isArray(r.data)) {
+          setCategories(r.data);
+        }
+      })
+      .catch((err) => {
+        console.error("Kategoriler çekilirken hata oluştu:", err.message);
+      });
+    }, [token]); 
 
   const handleSave = async () => {
     if (!productName.trim() || !barcode.trim() || !unitPrice || !currentStock) {
@@ -110,23 +133,61 @@ export default function AddProductScreen({ navigation, route }: Props) {
 
           {/* Kategori */}
           <Text style={s.label}>Kategori *</Text>
-          {categories.length === 0 ? (
-            <Text style={s.noCategory}>Kategori yükleniyor...</Text>
-          ) : (
-            <View style={s.categoryGrid}>
-              {categories.map(c => (
-                <TouchableOpacity
-                  key={c.id}
-                  style={[s.categoryChip, categoryId === c.id && s.categoryChipActive]}
-                  onPress={() => setCategoryId(c.id)}
-                >
-                  <Text style={[s.categoryChipText, categoryId === c.id && s.categoryChipTextActive]}>
-                    {c.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+          <View>
+            <TextInput
+              style={[s.input, categoryId ? s.inputSelected : undefined]}
+              value={categoryText}
+              onChangeText={text => {
+                setCategoryText(text);
+                setCategoryId(null);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              placeholder="Kategori seçiniz."
+              placeholderTextColor="#94A3B8"
+            />
+            {categoryId ? (
+              <Text style={s.selectedHint}>✓ Seçildi</Text>
+            ) : null}
+            
+            
+            {showSuggestions && (categoryText?.length ?? 0) > 0 && (filteredCategories?.length ?? 0) > 0 && (
+              <View style={s.suggestionBox}>
+                {filteredCategories.map(c => (
+                  <TouchableOpacity
+                    key={c.id}
+                    style={s.suggestionItem}
+                    onPress={() => {
+                      setCategoryId(c.id);
+                      setCategoryText(c.categoryName || '');
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    <Text style={s.suggestionText}>{c.categoryName}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+          
+            {showSuggestions && (categoryText?.length ?? 0) === 0 && (categories?.length ?? 0) > 0 && (
+              <View style={s.suggestionBox}>
+                {categories.map(c => (
+                  <TouchableOpacity
+                    key={c.id}
+                    style={s.suggestionItem}
+                    onPress={() => {
+                      setCategoryId(c.id);
+                      setCategoryText(c.categoryName || '');
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    <Text style={s.suggestionText}>{c.categoryName}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </View>
         </View>
 
         {/* Kaydet */}
@@ -166,6 +227,11 @@ const s = StyleSheet.create({
   saveBtn: { backgroundColor: PRIMARY, borderRadius: 16, height: 56, alignItems: 'center', justifyContent: 'center', shadowColor: PRIMARY, shadowOpacity: 0.35, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 6 },
   saveBtnDisabled: { backgroundColor: '#94A3B8', shadowOpacity: 0 },
   saveBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
-  inputLocked: { backgroundColor: '#F1F5F9', color: '#64748B', borderColor: '#CBD5E1' },
-  lockedHint:  { fontSize: 11, color: '#64748B', marginTop: -8, marginBottom: 12, marginLeft: 4 },
+  inputLocked:   { backgroundColor: '#F1F5F9', color: '#64748B', borderColor: '#CBD5E1' },
+  inputSelected: { borderColor: '#4338CA', backgroundColor: '#F0F0FF' },
+  lockedHint:    { fontSize: 11, color: '#64748B', marginTop: -8, marginBottom: 12, marginLeft: 4 },
+  selectedHint:  { fontSize: 11, color: '#4338CA', marginTop: -8, marginBottom: 12, marginLeft: 4, fontWeight: '600' },
+  suggestionBox: { backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#E2E8F0', borderRadius: 12, marginTop: -8, marginBottom: 12, overflow: 'hidden' },
+  suggestionItem:{ paddingHorizontal: 14, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
+  suggestionText:{ fontSize: 14, color: '#1E293B' },
 });

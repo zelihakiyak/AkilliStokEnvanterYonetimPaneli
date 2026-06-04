@@ -76,6 +76,17 @@ Bu haftalarda proje kararlı hale getirilmiş, kritik hatalar giderilmiş ve Exp
 
 ---
 
+## 📌 7. Hafta Gelişmeleri
+Bu hafta projeye akıllı tahminleme motoru, gerçek kamera entegrasyonu ve gelişmiş stok loglama sistemi kazandırılmıştır.
+
+* **Kamera Entegrasyonu:** `expo-camera` kütüphanesi ile telefon kamerası uygulamaya entegre edildi. `Camera.requestCameraPermissionsAsync()` ile kamera izni alındı, `CameraView` bileşeniyle EAN-13, EAN-8, QR Code, Code128 ve Code39 formatlarındaki barkodlar otomatik okunur hale getirildi.
+* **Akıllı Barkod Akışı:** Okutulan barkoda ait ürün veritabanında bulunamazsa kullanıcıya üç seçenek sunuluyor: İptal, Stok Hareketi veya Yeni Ürün Ekle. "Yeni Ürün Ekle" seçildiğinde `AddProductScreen` açılıyor ve barkod alanı otomatik dolu ve kilitli geliyor.
+* **OldStock & NewStock Loglama:** `StockLog` modeline `OldStock` (işlem öncesi stok) ve `NewStock` (işlem sonrası stok) alanları eklendi. `POST /api/StockLogs` endpoint'i her işlemde bu iki değeri otomatik hesaplayıp kaydediyor.
+* **Tahminleme Algoritması:** `ForecastController` oluşturuldu. Algoritma: son 30 günlük çıkış hareketlerinden günlük ortalama tüketim (`DailyUsage = totalOut / 30`) hesaplanıyor, ardından `EstimatedDaysLeft = CurrentStock / DailyUsage` formülüyle ürünün tahmini bitiş süresi belirleniyor. Her ürün için `Kritik` (≤7 gün), `Düşük` (≤14 gün), `Orta` (≤30 gün) ve `Yeterli` risk seviyeleri atanıyor. Sonuçlar en kritik üründen başlayarak sıralı döndürülüyor.
+* **Swagger Entegrasyonu:** Tüm yeni endpoint'ler (`GET /api/Forecast`, `GET /api/Forecast/{id}`) Swagger üzerinden test edildi ve doğrulandı.
+
+---
+
 ## 📺 Haftalık İlerleme Videoları
 
 ### 🔹 HAFTA 1 - Backend Altyapısı ve Veritabanı Mimarisi
@@ -97,6 +108,10 @@ Bu haftalarda proje kararlı hale getirilmiş, kritik hatalar giderilmiş ve Exp
 ### 🔹 HAFTA 5-6 - Hata Giderme, Expo Migrasyonu ve Stabilizasyon
 > **Açıklama:** Expo SDK uyumsuzluğunun giderilmesi, TypeScript derleme hatalarının çözümü, eksik StockLogs endpoint'inin eklenmesi ve SQL NULL hatasının düzeltilmesi anlatılmaktadır.
 > 🔗 [**Hafta 5-6 İlerleme Videosu**]()
+
+### 🔹 HAFTA 7 - Kamera Entegrasyonu, Stok Loglama ve Tahminleme Algoritması
+> **Açıklama:** `expo-camera` ile gerçek kamera ve barkod okuma entegrasyonu, `OldStock`/`NewStock` ile gelişmiş stok loglama ve `ForecastController` ile akıllı tahminleme algoritmasının (günlük tüketim analizi, tahmini bitiş süresi, risk seviyesi) geliştirilmesi anlatılmaktadır.
+> 🔗 [**Hafta 7 İlerleme Videosu**]()
 
 ---
 
