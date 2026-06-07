@@ -87,31 +87,60 @@ Bu hafta projeye akıllı tahminleme motoru, gerçek kamera entegrasyonu ve geli
 
 ---
 
+## 📌 8. Hafta Gelişmeleri
+Bu hafta uygulamaya, tahminleme algoritmasından gelen verileri kullanıcıya analiz edilebilir şekilde sunan kapsamlı bir **Raporlar** modülü kazandırılmıştır.
+
+* **Raporlar Ekranı Mimarisi:** `RaporlarScreen` içinde `createMaterialTopTabNavigator` kullanılarak, alt sekmeli (bottom tab bar) bir rapor merkezi kuruldu. Her rapor türü kendi bağımsız bileşeninde (`KritikRaporu`, `TahminRaporu`, `HareketlerRaporu`, `OzetRaporu`) izole edildi.
+* **Kritik Stok Raporu:** `currentStock <= criticalLimit` koşuluna göre filtrelenen ürünler listelendi; her kart üzerinde `currentStock / criticalLimit` oranına göre dolan bir ilerleme çubuğu (progress bar) ile stok durumu görselleştirildi.
+* **Tahmin Raporu:** `GET /api/Forecast` endpoint'inden dönen risk seviyeleri (`Kritik`, `Düşük`, `Orta`, `Yeterli`, `Veri Yok`), `RISK_COLORS` adlı bir lookup table ile renklendirilerek hem özet sayaç kartlarında hem de ürün bazlı kartlarda gösterildi.
+* **Stok Hareketleri Raporu:** Tüm giriş/çıkış hareketleri arama ve filtre çipleriyle birlikte listelendi; `useMemo` kullanılarak filtrelenmiş veri her API isteği yapılmadan, bellekte yeniden hesaplandı.
+* **Özet Raporu:** `reduce` tabanlı tek geçişli bir hesaplama ile toplam ürün sayısı, toplam stok değeri ve kritik ürün sayısı gibi genel istatistikler özetlendi; her ürün kartında birim fiyat ve toplam değer Türkçe para birimi formatında (`toLocaleString('tr-TR')`) gösterildi.
+* **Ortak Veri Akışı:** Tüm rapor ekranlarında `useFocusEffect` ile ekrana her odaklanıldığında veya aşağı çekilip yenilendiğinde (`pull-to-refresh`) verinin otomatik tazelenmesi sağlandı.
+
+---
+
+## 📌 9. Hafta Gelişmeleri
+Bu hafta uygulamaya, tahminleme algoritmasından gelen verilere dayalı **dinamik bildirim ve kritik uyarı sistemi** kazandırılmıştır.
+
+* **Açılışta Tek Seferlik Uyarı (Alert):** Uygulama açıldığında veya Dashboard ekranı yüklendiğinde, `GET /api/Forecast` endpoint'inden dönen veriler taranarak `estimatedDaysLeft <= 3` koşulunu sağlayan ürünler tespit ediliyor. Bu ürünler varsa, kullanıcıya isim ve tahmini gün sayısıyla birlikte bir `Alert.alert` penceresi gösteriliyor. `useRef(false)` ile oluşturulan `alertShown` bayrağı sayesinde bu uyarı oturum başına yalnızca bir kez tetikleniyor, gereksiz tekrarların önüne geçiliyor.
+* **Kalıcı Uyarı Banner'ı (Badge):** Dashboard'da istatistik kartlarının hemen altına, kritik ürün sayısı kadar kırmızı çerçeveli bir "🚨 Acil Stok Uyarısı" banner'ı yerleştirildi. Banner, "X ürün 3 gün içinde tükenecek" mesajını gösteriyor ve üzerine dokunulduğunda doğrudan Raporlar ekranına yönlendiriyor.
+* **Gerçek Zamanlı Güncelleme:** `forecast` state'i her `fetchData` çağrısında (ekran açılışında ve pull-to-refresh ile) yeniden çekiliyor, böylece banner ve uyarılar güncel stok durumunu birebir yansıtıyor.
+
+---
+
 ## 📺 Haftalık İlerleme Videoları
 
 ### 🔹 HAFTA 1 - Backend Altyapısı ve Veritabanı Mimarisi
 > **Açıklama:** Bu videoda boş bir projeden başlanarak veritabanı tablolarının oluşturulması, EF Core entegrasyonu ve Swagger üzerinden API testleri gösterilmektedir.
-> 🔗 [**Hafta 1 İlerleme Videosu**](https://youtu.be/tInPIGB9GYA)
+> 🔗 [**Hafta 1 İlerleme Videosu**](https://youtu.be/tInPIGB9GYA?si=1ORs8yQxzfHPRoZ0)
 
 ### 🔹 HAFTA 2 - Mobil Navigasyon ve Backend Entegrasyonu
 > **Açıklama:** Projenin temel iskeletinin kurulumu, mobil uygulamanın API ile haberleşmesi ve Dashboard ekranına giriş anlatılmaktadır.
-> 🔗 [**Hafta 2 İlerleme Videosu**](https://www.youtube.com/watch?v=AEs_-y3yFlc)
+> 🔗 [**Hafta 2 İlerleme Videosu**](https://youtu.be/AEs_-y3yFlc?si=aB1nAXWf7My5HHGR)
 
 ### 🔹 HAFTA 3 - Mobil Ekran Tasarımları ve UI Geliştirme
 > **Açıklama:** Tüm uygulama ekranlarının (Login, Dashboard, Ürün Listesi, Ürün Detay, Stok Hareket, Barkod Tara) mockup'a uygun şekilde tasarlanması ve navigasyon akışının tamamlanması anlatılmaktadır.
-> 🔗 [**Hafta 3 İlerleme Videosu**]()
+> 🔗 [**Hafta 3 İlerleme Videosu**](https://youtu.be/Yu5tpYA9Gg4?si=yBv-xytkQdQorvFx)
 
 ### 🔹 HAFTA 4 - JWT Kimlik Doğrulama ve Rol Bazlı Yetkilendirme
 > **Açıklama:** Backend'de JWT token üretimi, `[Authorize(Roles)]` attribute'ları ve mobil tarafta AuthContext + AsyncStorage ile güvenli oturum yönetiminin hayata geçirilmesi anlatılmaktadır.
-> 🔗 [**Hafta 4 İlerleme Videosu**]()
+> 🔗 [**Hafta 4 İlerleme Videosu**](https://youtu.be/dwVNvVvgUQc?si=9lCvJhpxnn5BGfbI)
 
 ### 🔹 HAFTA 5-6 - Hata Giderme, Expo Migrasyonu ve Stabilizasyon
 > **Açıklama:** Expo SDK uyumsuzluğunun giderilmesi, TypeScript derleme hatalarının çözümü, eksik StockLogs endpoint'inin eklenmesi ve SQL NULL hatasının düzeltilmesi anlatılmaktadır.
-> 🔗 [**Hafta 5-6 İlerleme Videosu**]()
+> 🔗 [**Hafta 5-6 İlerleme Videosu**](https://youtu.be/3Em_-unGBLk?si=YQ3uQsWEA-necTuv)
 
 ### 🔹 HAFTA 7 - Kamera Entegrasyonu, Stok Loglama ve Tahminleme Algoritması
 > **Açıklama:** `expo-camera` ile gerçek kamera ve barkod okuma entegrasyonu, `OldStock`/`NewStock` ile gelişmiş stok loglama ve `ForecastController` ile akıllı tahminleme algoritmasının (günlük tüketim analizi, tahmini bitiş süresi, risk seviyesi) geliştirilmesi anlatılmaktadır.
-> 🔗 [**Hafta 7 İlerleme Videosu**]()
+> 🔗 [**Hafta 7 İlerleme Videosu**](https://youtu.be/wSngDmpQosA?si=tTHgU0vysVtr1ehv)
+
+### 🔹 HAFTA 8 - Raporlar Modülü ve Veri Analiz Ekranları
+> **Açıklama:** `RaporlarScreen` içinde sekmeli bir rapor merkezinin kurulması; Kritik Stok, Tahmin, Stok Hareketleri ve Özet raporlarının geliştirilmesi, risk seviyelerinin renklendirilmesi ve `useMemo`/`reduce` gibi performans odaklı veri dönüştürme tekniklerinin kullanılması anlatılmaktadır.
+> 🔗 [**Hafta 8 İlerleme Videosu**](https://youtu.be/0_hUlw18ZAM?si=DhgSYQAle_vi4GLr)
+
+### 🔹 HAFTA 9 - Dinamik Bildirimler ve Kritik Uyarılar
+> **Açıklama:** Tahminleme algoritmasından gelen "3 gün içinde bitecek ürünler" verisinin, uygulama açılışında tek seferlik `Alert` penceresi ve Dashboard'da kalıcı bir uyarı banner'ı (Badge) olarak kullanıcıya sunulması anlatılmaktadır.
+> 🔗 [**Hafta 9 İlerleme Videosu**](https://youtu.be/_B-MyTYgmns?si=9hT092iuKE7mdTZm)
 
 ---
 

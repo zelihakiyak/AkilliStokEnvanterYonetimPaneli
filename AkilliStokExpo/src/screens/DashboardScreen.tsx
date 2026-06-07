@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,13 @@ type StockLogType = {
   transactionDate: string;
 };
 
+type ForecastType = {
+  id: number;
+  productName: string;
+  estimatedDaysLeft: number | null;
+  riskLevel: string;
+};
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CHART_WIDTH  = SCREEN_WIDTH - 48;
 
@@ -35,11 +42,13 @@ const PIE_COLORS = ['#4338CA','#6366F1','#818CF8','#A5B4FC','#C7D2FE'];
 
 export default function DashboardScreen({ navigation }: Props) {
   const { user, logout, isAdmin } = useAuth();
-  const [products,    setProducts]    = useState<ProductType[]>([]);
-  const [recentLogs,  setRecentLogs]  = useState<StockLogType[]>([]);
+  const [products,      setProducts]      = useState<ProductType[]>([]);
+  const [recentLogs,    setRecentLogs]    = useState<StockLogType[]>([]);
   const [categoryCount, setCategoryCount] = useState(0);
-  const [loading,     setLoading]    = useState(true);
-  const [refreshing,  setRefreshing]  = useState(false);
+  const [forecast,      setForecast]      = useState<ForecastType[]>([]);
+  const [loading,       setLoading]       = useState(true);
+  const [refreshing,    setRefreshing]    = useState(false);
+  const alertShown = useRef(false);
 
   const stats = React.useMemo(() => {
     const lowStockCount = products.filter(p => p.currentStock <= p.criticalLimit).length;
@@ -81,14 +90,34 @@ export default function DashboardScreen({ navigation }: Props) {
 
   const fetchData = useCallback(async () => {
     try {
-      const [prodRes, logRes, catRes] = await Promise.all([
+      const [prodRes, logRes, catRes, foreRes] = await Promise.all([
         apiClient.get('/Products'),
         apiClient.get('/StockLogs'),
         apiClient.get('/Categories'),
+        apiClient.get('/Forecast'),
       ]);
       setProducts(prodRes.data);
       setRecentLogs(logRes.data as StockLogType[]);
       setCategoryCount(catRes.data.length);
+      setForecast(foreRes.data as ForecastType[]);
+
+      // ── 3 gün içinde bitecek ürünler → Alert ────────────────────────
+      if (!alertShown.current) {
+        const urgent = (foreRes.data as ForecastType[]).filter(
+          f => f.estimatedDaysLeft !== null && f.estimatedDaysLeft <= 3
+        );
+        if (urgent.length > 0) {
+          alertShown.current = true;
+          const list = urgent
+            .map(f => `• ${f.productName} (≈${f.estimatedDaysLeft} gün)`)
+            .join('\n');
+          Alert.alert(
+            '⚠️ Acil Stok Uyarısı',
+            `${urgent.length} ürün 3 gün içinde tükenecek:\n\n${list}`,
+            [{ text: 'Tamam' }],
+          );
+        }
+      }
     } catch {
       Alert.alert('Bağlantı Hatası', 'Veriler yüklenemedi.');
     } finally {
@@ -172,6 +201,30 @@ export default function DashboardScreen({ navigation }: Props) {
             <Text style={s.statLabel}>Kategori</Text>
           </View>
         </View>
+
+        {/* ── 3 Gün Uyarı Banner'ı ─────────────────── */}
+        {(() => {
+          const urgent = forecast.filter(
+            f => f.estimatedDaysLeft !== null && f.estimatedDaysLeft <= 3
+          );
+          if (urgent.length === 0) return null;
+          return (
+            <TouchableOpacity
+              style={s.urgentBanner}
+              onPress={() => navigation.navigate('Raporlar')}
+              activeOpacity={0.85}
+            >
+              <Text style={s.urgentBannerIcon}>🚨</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={s.urgentBannerTitle}>Acil Stok Uyarısı</Text>
+                <Text style={s.urgentBannerText}>
+                  {urgent.length} ürün 3 gün içinde tükenecek — detaylar için dokun
+                </Text>
+              </View>
+              <Text style={s.urgentBannerArrow}>›</Text>
+            </TouchableOpacity>
+          );
+        })()}
 
         {/* Hızlı Erişim */}
         <View style={s.section}>
@@ -309,6 +362,7 @@ export default function DashboardScreen({ navigation }: Props) {
             <TouchableOpacity key={key} style={s.tabItem} onPress={() => {
               if (key === 'Envanter') navigation.navigate('UrunListesi');
               if (key === 'Raporlar') navigation.navigate('Raporlar');
+              if (key === 'Ayarlar')  navigation.navigate('Ayarlar');
             }} activeOpacity={0.7}>
               <Text style={[s.tabIcon, isActive && s.tabIconActive]}>{ICONS[key]}</Text>
               <Text style={[s.tabLabel, isActive && s.tabLabelActive]}>{LABELS[key]}</Text>
@@ -335,6 +389,11 @@ const s = StyleSheet.create({
   subGreeting:  { fontSize: 12, color: '#64748B', marginTop: 1 },
   logoutBtn:    { width: 36, height: 36, borderRadius: 18, backgroundColor: '#FEE2E2', alignItems: 'center', justifyContent: 'center' },
   logoutIcon:   { fontSize: 18, color: '#EF4444' },
+  urgentBanner:      { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEF2F2', marginHorizontal: 16, marginTop: 14, borderRadius: 14, padding: 14, gap: 10, borderLeftWidth: 4, borderLeftColor: '#EF4444' },
+  urgentBannerIcon:  { fontSize: 22 },
+  urgentBannerTitle: { fontSize: 13, fontWeight: '700', color: '#991B1B', marginBottom: 2 },
+  urgentBannerText:  { fontSize: 11, color: '#B91C1C', lineHeight: 16 },
+  urgentBannerArrow: { fontSize: 22, color: '#EF4444' },
   statsGrid:    { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, paddingTop: 16, gap: 10 },
   statCard:     { width: '47%', borderRadius: 16, padding: 16, gap: 4 },
   statIcon:     { fontSize: 22 },

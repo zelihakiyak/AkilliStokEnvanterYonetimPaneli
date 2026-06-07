@@ -192,6 +192,7 @@ export default function UrunListesiScreen({ navigation }: Props) {
               onPress={() => {
                 if (key === 'Panel') navigation.goBack();
                 if (key === 'Raporlar') navigation.navigate('Raporlar');
+                if (key === 'Ayarlar') navigation.navigate('Ayarlar');
               }}
               activeOpacity={0.7}
             >

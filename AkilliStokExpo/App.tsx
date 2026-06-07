@@ -13,6 +13,10 @@ import StokHareketScreen from './src/screens/StokHareketScreen';
 import AddProductScreen  from './src/screens/AddProductScreen';
 import EditProductScreen from './src/screens/EditProductScreen';
 import RaporlarScreen   from './src/screens/RaporlarScreen';
+import AyarlarScreen     from './src/screens/AyarlarScreen';
+import HesapScreen       from './src/screens/ayarlar/HesapScreen';
+import BildirimlerScreen from './src/screens/ayarlar/BildirimlerScreen';
+import GorunumScreen     from './src/screens/ayarlar/GorunumScreen';
 
 export type UserType = {
   id: number; fullName: string; email: string; role: string;
@@ -33,6 +37,10 @@ export type RootStackParamList = {
   AddProduct:  { barcode?: string } | undefined;
   EditProduct: { product: ProductType };
   Raporlar:    undefined;
+  Ayarlar:     undefined;
+  Hesap:       undefined;
+  Bildirimler: undefined;
+  Gorunum:     undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -60,6 +68,10 @@ function RootNavigator() {
           <Stack.Screen name="AddProduct"  component={AddProductScreen} />
           <Stack.Screen name="EditProduct" component={EditProductScreen} />
           <Stack.Screen name="Raporlar"    component={RaporlarScreen} />
+          <Stack.Screen name="Ayarlar"     component={AyarlarScreen} />
+          <Stack.Screen name="Hesap"       component={HesapScreen} />
+          <Stack.Screen name="Bildirimler" component={BildirimlerScreen} />
+          <Stack.Screen name="Gorunum"     component={GorunumScreen} />
         </>
       ) : (
         <Stack.Screen name="Login" component={LoginScreen} />

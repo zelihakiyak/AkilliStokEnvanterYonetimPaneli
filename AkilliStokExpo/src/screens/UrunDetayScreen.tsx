@@ -170,8 +170,10 @@ export default function UrunDetayScreen({ navigation, route }: Props) {
               key={key}
               style={s.tabItem}
               onPress={() => {
-                if (key === 'Panel')    navigation.navigate('Home',        {} as any);
-                if (key === 'Envanter') navigation.navigate('UrunListesi');
+                if (key === 'Panel')     navigation.navigate('Home',        {} as any);
+                if (key === 'Envanter')  navigation.navigate('UrunListesi');
+                if (key === 'Raporlar')  navigation.navigate('Raporlar');
+                if (key === 'Ayarlar')   navigation.navigate('Ayarlar');
               }}
               activeOpacity={0.7}
             >

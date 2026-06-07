@@ -7,7 +7,6 @@ import { RootStackParamList } from '../../App';
 import KritikRaporu    from './raporlar/KritikRaporu';
 import TahminRaporu    from './raporlar/TahminRaporu';
 import HareketlerRaporu from './raporlar/HareketlerRaporu';
-import HacimRaporu     from './raporlar/HacimRaporu';
 import OzetRaporu      from './raporlar/OzetRaporu';
 
 type Props = {
@@ -36,15 +35,14 @@ export default function RaporlarScreen({ navigation }: Props) {
           tabBarInactiveTintColor: '#94A3B8',
           tabBarIndicatorStyle:    { backgroundColor: '#4338CA', height: 3, borderRadius: 2, top: 0 },
           tabBarStyle:             { backgroundColor: '#fff', elevation: 4, shadowOpacity: 0.06, borderTopWidth: 1, borderTopColor: '#F1F5F9', height: 70, paddingBottom: 8 },
-          tabBarLabelStyle:        { fontSize: 11, fontWeight: '700', textTransform: 'none', marginTop: 2 },
-          tabBarScrollEnabled:     true,
-          tabBarItemStyle:         { width: 80, alignItems: 'center', justifyContent: 'center' },
+          tabBarLabelStyle:        { fontSize: 11, fontWeight: '600', textTransform: 'none', marginTop: 2, textAlign: 'center' },
+          tabBarScrollEnabled:     false,
+          tabBarItemStyle:         { alignItems: 'center', justifyContent: 'center' },
         }}
       >
         <Tab.Screen name="Kritik"      component={KritikRaporu}     options={{ tabBarLabel: '🚨 Kritik' }} />
         <Tab.Screen name="Tahmin"      component={TahminRaporu}     options={{ tabBarLabel: '🔮 Tahmin' }} />
-        <Tab.Screen name="Hareketler"  component={HareketlerRaporu} options={{ tabBarLabel: '📋 Hareketler' }} />
-        <Tab.Screen name="Hacim"       component={HacimRaporu}      options={{ tabBarLabel: '📊 Hacim' }} />
+        <Tab.Screen name="Stok Hareketleri"  component={HareketlerRaporu} options={{ tabBarLabel: '📋 Hareketler' }} />
         <Tab.Screen name="Ozet"        component={OzetRaporu}       options={{ tabBarLabel: '📦 Özet' }} />
       </Tab.Navigator>
     </View>
