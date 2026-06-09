@@ -19,10 +19,12 @@ namespace AkilliStok.API.Controllers
         }
 
         // 1. Tüm Ürünleri Listele (Admin + Personel)
+        // AsNoTracking: salt-okunur listeleme uç noktası — EF Core'un değişiklik
+        // izleme (change tracking) yükünü ortadan kaldırarak gereksiz belleği önler.
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            return await _context.Products.Include(p => p.Category).ToListAsync();
+            return await _context.Products.Include(p => p.Category).AsNoTracking().ToListAsync();
         }
 
         // 2. Barkod ile Sorgula (Admin + Personel)
@@ -31,6 +33,7 @@ namespace AkilliStok.API.Controllers
         {
             var product = await _context.Products
                 .Include(p => p.Category)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Barcode == code);
 
             if (product == null) return NotFound(new { message = "Ürün bulunamadı." });
@@ -41,7 +44,7 @@ namespace AkilliStok.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _context.Products.Include(p => p.Category).AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
             if (product == null) return NotFound(new { message = "Ürün bulunamadı." });
             return Ok(product);
         }

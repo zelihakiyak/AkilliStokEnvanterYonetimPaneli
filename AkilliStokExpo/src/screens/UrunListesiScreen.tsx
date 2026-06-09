@@ -22,7 +22,9 @@ type Props = {
 type FilterKey = 'Tümü' | 'Düşük Stok';
 const FILTERS: FilterKey[] = ['Tümü', 'Düşük Stok'];
 
-function ProductCard({ product, onPress }: { product: ProductType; onPress: () => void }) {
+// React.memo: liste kaydırılırken yalnızca props'u (ürün verisi) değişen kartlar
+// yeniden render edilir — FlatList performansı için kritik bir optimizasyon.
+const ProductCard = React.memo(function ProductCard({ product, onPress }: { product: ProductType; onPress: () => void }) {
   const isLow = product.currentStock <= product.criticalLimit;
   return (
     <TouchableOpacity style={pc.card} onPress={onPress} activeOpacity={0.75}>
@@ -41,7 +43,13 @@ function ProductCard({ product, onPress }: { product: ProductType; onPress: () =
       </View>
     </TouchableOpacity>
   );
-}
+}, (prev, next) =>
+  prev.product.id === next.product.id &&
+  prev.product.currentStock === next.product.currentStock &&
+  prev.product.unitPrice === next.product.unitPrice &&
+  prev.product.productName === next.product.productName &&
+  prev.product.criticalLimit === next.product.criticalLimit
+);
 
 const pc = StyleSheet.create({
   card:         { backgroundColor: '#fff', borderRadius: 16, padding: 18, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 8, elevation: 2, position: 'relative', overflow: 'hidden' },
@@ -78,6 +86,18 @@ export default function UrunListesiScreen({ navigation }: Props) {
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
   const onRefresh = () => { setRefreshing(true); fetchProducts(); };
+
+  // keyExtractor ve renderItem her render'da yeniden
+  // oluşturulmasın diye useCallback ile sabitlenir — bu, React.memo'lu
+  // ProductCard'ların gereksiz yeniden render edilmesini önler.
+  const keyExtractor = useCallback((item: ProductType) => item.id.toString(), []);
+
+  const renderItem = useCallback(({ item }: { item: ProductType }) => (
+    <ProductCard
+      product={item}
+      onPress={() => navigation.navigate('UrunDetay', { product: item })}
+    />
+  ), [navigation]);
 
   const filtered = useMemo(() => {
     let list = products;
@@ -151,16 +171,23 @@ export default function UrunListesiScreen({ navigation }: Props) {
       ) : (
         <FlatList
           data={filtered}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
           contentContainerStyle={s.listContent}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4338CA" />}
-          renderItem={({ item }) => (
-            <ProductCard
-              product={item}
-              onPress={() => navigation.navigate('UrunDetay', { product: item })}
-            />
-          )}
+          // --- Performans optimizasyonları ---
+          // Ekran dışına çıkan satırların native view'larını bellekten kaldırır.
+          removeClippedSubviews={true}
+          // İlk açılışta render edilecek öğe sayısını sınırlar (daha hızlı ilk render).
+          initialNumToRender={8}
+          // Kaydırma sırasında her seferinde render edilecek öğe sayısı.
+          maxToRenderPerBatch={8}
+          // Render batch'leri arasındaki bekleme süresi (ms) — JS thread'ini rahatlatır.
+          updateCellsBatchingPeriod={50}
+          // Bellekte tutulacak "ekran yüksekliği" katsayısı; düşük değer bellek
+          // kullanımını azaltır, listelerde akıcılığı korur.
+          windowSize={7}
         />
       )}
 

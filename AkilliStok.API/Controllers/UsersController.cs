@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -72,6 +73,78 @@ namespace AkilliStok.API.Controllers
                 Token     = token,
                 ExpiresAt = expiresAt,
             });
+        }
+
+        // PUT: api/Users/profile
+        // Oturum açmış kullanıcının Ad Soyad / E-posta bilgilerini günceller
+        [Authorize]
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
+        {
+            var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+                              ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Kullanıcı doğrulanamadı." });
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound(new { message = "Kullanıcı bulunamadı." });
+
+            if (string.IsNullOrWhiteSpace(request.FullName) || string.IsNullOrWhiteSpace(request.Email))
+                return BadRequest(new { message = "Ad Soyad ve E-posta alanları boş bırakılamaz." });
+
+            // Email başka bir kullanıcı tarafından kullanılıyor mu?
+            bool emailTaken = await _context.Users
+                .AnyAsync(u => u.Email == request.Email && u.Id != userId);
+            if (emailTaken)
+                return BadRequest(new { message = "Bu e-posta adresi başka bir hesap tarafından kullanılıyor." });
+
+            user.FullName = request.FullName.Trim();
+            user.Email    = request.Email.Trim();
+            await _context.SaveChangesAsync();
+
+            return Ok(new UpdateProfileResponse
+            {
+                Id       = user.Id,
+                FullName = user.FullName,
+                Email    = user.Email,
+                Role     = user.Role,
+            });
+        }
+
+        // PUT: api/Users/change-password
+        // Oturum açmış kullanıcının şifresini değiştirir (mevcut şifre doğrulanarak)
+        [Authorize]
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+                              ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Kullanıcı doğrulanamadı." });
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound(new { message = "Kullanıcı bulunamadı." });
+
+            if (string.IsNullOrWhiteSpace(request.CurrentPassword) || string.IsNullOrWhiteSpace(request.NewPassword))
+                return BadRequest(new { message = "Mevcut şifre ve yeni şifre alanları boş bırakılamaz." });
+
+            if (user.Password != request.CurrentPassword)
+                return BadRequest(new { message = "Mevcut şifre hatalı." });
+
+            if (request.NewPassword.Length < 6)
+                return BadRequest(new { message = "Yeni şifre en az 6 karakter olmalıdır." });
+
+            if (request.NewPassword == request.CurrentPassword)
+                return BadRequest(new { message = "Yeni şifre, mevcut şifre ile aynı olamaz." });
+
+            user.Password = request.NewPassword;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Şifreniz başarıyla güncellendi." });
         }
 
         // POST: api/Users/register

@@ -19,10 +19,11 @@ namespace AkilliStok.API.Controllers
         }
 
         // Tüm kategorileri listele (GET)
+        // AsNoTracking: salt-okunur sorgu — gereksiz değişiklik izleme yükünü kaldırır.
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories.AsNoTracking().ToListAsync();
         }
 
         // Yeni kategori ekle (POST)

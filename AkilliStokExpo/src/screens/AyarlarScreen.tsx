@@ -8,12 +8,11 @@ type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Ayarlar'>;
 };
 
-type RowKey = 'Hesap' | 'Bildirimler' | 'Gorunum';
+type RowKey = 'Hesap' | 'Bildirimler';
 
 const ROWS: { key: RowKey; icon: string; title: string; subtitle: string; route: keyof RootStackParamList }[] = [
   { key: 'Hesap',       icon: '👤', title: 'Hesap',       subtitle: 'Profil bilgileri, rol ve oturum',           route: 'Hesap' },
   { key: 'Bildirimler', icon: '🔔', title: 'Bildirimler', subtitle: 'Kritik stok uyarıları ve eşik ayarları',     route: 'Bildirimler' },
-  { key: 'Gorunum',     icon: '🎨', title: 'Görünüm',     subtitle: 'Tema, varsayılan ekran ve liste düzeni',    route: 'Gorunum' },
 ];
 
 export default function AyarlarScreen({ navigation }: Props) {

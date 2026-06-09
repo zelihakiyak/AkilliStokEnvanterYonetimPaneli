@@ -17,11 +17,15 @@ public class StockLogsController : ControllerBase
     }
 
     // GET: api/StockLogs — tüm hareketleri tarihe göre azalan sırada döndür
+    // Not: .Include(l => l.Product) kaldırıldı — projeksiyon (Select) zaten yalnızca
+    // ProductName alanına ihtiyaç duyduğundan, EF Core bunu tek bir SQL JOIN'e çevirir
+    // ve tam Product nesnelerini belleğe yükleyip izlemek zorunda kalmaz.
+    // AsNoTracking: salt-okunur liste — değişiklik izleme yükü gereksiz.
     [HttpGet]
     public async Task<IActionResult> GetStockLogs()
     {
         var logs = await _context.StockLogs
-            .Include(l => l.Product)
+            .AsNoTracking()
             .OrderByDescending(l => l.TransactionDate)
             .Select(l => new
             {

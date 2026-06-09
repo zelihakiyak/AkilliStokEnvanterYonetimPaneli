@@ -24,12 +24,26 @@ public class ForecastController : ControllerBase
     {
         var thirtyDaysAgo = DateTime.Now.AddDays(-30);
 
+        // Yalnızca hesaplama için gereken alanlar projekte edilir — tam Product
+        // varlıklarını (UnitPrice, CategoryId, Category vb.) yükleyip izlemek yerine
+        // hafif bir DTO'ya dönüştürülür. AsNoTracking: salt-okunur rapor uç noktası.
         var products = await _context.Products
+            .AsNoTracking()
+            .Select(p => new
+            {
+                p.Id,
+                p.ProductName,
+                p.Barcode,
+                p.CurrentStock,
+                p.CriticalLimit
+            })
             .ToListAsync();
 
         var logs = await _context.StockLogs
+            .AsNoTracking()
             .Where(l => l.TransactionDate >= thirtyDaysAgo
                      && l.TransactionType == "Out")
+            .Select(l => new { l.ProductId, l.QuantityChanged })
             .ToListAsync();
 
         var result = products.Select(p =>

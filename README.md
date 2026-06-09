@@ -18,6 +18,63 @@ Bu proje, işletmelerin stok takibini dijitalleştirmek, barkod tarama teknoloji
 
 ---
 
+## ⚙️ Kurulum ve Çalıştırma
+
+### Backend (`AkilliStok.API`)
+1. `AkilliStok.API` klasöründe bağımlılıkları yükleyin: `dotnet restore`
+2. `appsettings.json` içindeki `ConnectionStrings:DefaultConnection` değerini kendi MSSQL Server adresinize göre düzenleyin (varsayılan: `Server=localhost\SQLEXPRESS;Database=AkilliStokDB`).
+3. EF Core migration'larını uygulayarak veritabanını oluşturun: `dotnet ef database update`
+4. API'yi başlatın: `dotnet run` — Swagger arayüzüne `https://localhost:<port>/swagger` adresinden erişilebilir.
+
+### Mobil Uygulama (`AkilliStokExpo`)
+1. `AkilliStokExpo` klasöründe bağımlılıkları yükleyin: `npm install`
+2. `src/api/apiClient.ts` içindeki `baseURL` değerini, API'nizin erişilebilir adresiyle (yerel ağ IP'si veya bir ngrok tüneli) güncelleyin.
+3. Uygulamayı başlatın: `npx expo start` ve Expo Go uygulaması veya bir emülatör üzerinden QR kodu okutarak çalıştırın.
+
+> **Not:** Mobil cihazın, API'ye erişebilmesi için API ile aynı ağda olması ya da `apiClient`'ta tanımlı genel erişimli bir adres (örn. ngrok) kullanması gerekmektedir.
+
+---
+
+## 📺 Haftalık İlerleme Videoları
+
+### 🔹 HAFTA 1 - Backend Altyapısı ve Veritabanı Mimarisi
+> **Açıklama:** Bu videoda boş bir projeden başlanarak veritabanı tablolarının oluşturulması, EF Core entegrasyonu ve Swagger üzerinden API testleri gösterilmektedir.
+> 🔗 [**Hafta 1 İlerleme Videosu**](https://youtu.be/tInPIGB9GYA?si=1ORs8yQxzfHPRoZ0)
+
+### 🔹 HAFTA 2 - Mobil Navigasyon ve Backend Entegrasyonu
+> **Açıklama:** Projenin temel iskeletinin kurulumu, mobil uygulamanın API ile haberleşmesi ve Dashboard ekranına giriş anlatılmaktadır.
+> 🔗 [**Hafta 2 İlerleme Videosu**](https://youtu.be/AEs_-y3yFlc?si=aB1nAXWf7My5HHGR)
+
+### 🔹 HAFTA 3 - Mobil Ekran Tasarımları ve UI Geliştirme
+> **Açıklama:** Tüm uygulama ekranlarının (Login, Dashboard, Ürün Listesi, Ürün Detay, Stok Hareket, Barkod Tara) mockup'a uygun şekilde tasarlanması ve navigasyon akışının tamamlanması anlatılmaktadır.
+> 🔗 [**Hafta 3 İlerleme Videosu**](https://youtu.be/Yu5tpYA9Gg4?si=yBv-xytkQdQorvFx)
+
+### 🔹 HAFTA 4 - JWT Kimlik Doğrulama ve Rol Bazlı Yetkilendirme
+> **Açıklama:** Backend'de JWT token üretimi, `[Authorize(Roles)]` attribute'ları ve mobil tarafta AuthContext + AsyncStorage ile güvenli oturum yönetiminin hayata geçirilmesi anlatılmaktadır.
+> 🔗 [**Hafta 4 İlerleme Videosu**](https://youtu.be/dwVNvVvgUQc?si=9lCvJhpxnn5BGfbI)
+
+### 🔹 HAFTA 5-6 - Hata Giderme, Expo Migrasyonu ve Stabilizasyon
+> **Açıklama:** Expo SDK uyumsuzluğunun giderilmesi, TypeScript derleme hatalarının çözümü, eksik StockLogs endpoint'inin eklenmesi ve SQL NULL hatasının düzeltilmesi anlatılmaktadır.
+> 🔗 [**Hafta 5-6 İlerleme Videosu**](https://youtu.be/3Em_-unGBLk?si=YQ3uQsWEA-necTuv)
+
+### 🔹 HAFTA 7 - Kamera Entegrasyonu, Stok Loglama ve Tahminleme Algoritması
+> **Açıklama:** `expo-camera` ile gerçek kamera ve barkod okuma entegrasyonu, `OldStock`/`NewStock` ile gelişmiş stok loglama ve `ForecastController` ile akıllı tahminleme algoritmasının (günlük tüketim analizi, tahmini bitiş süresi, risk seviyesi) geliştirilmesi anlatılmaktadır.
+> 🔗 [**Hafta 7 İlerleme Videosu**](https://youtu.be/wSngDmpQosA?si=tTHgU0vysVtr1ehv)
+
+### 🔹 HAFTA 8 - Raporlar Modülü ve Veri Analiz Ekranları
+> **Açıklama:** `RaporlarScreen` içinde sekmeli bir rapor merkezinin kurulması; Kritik Stok, Tahmin, Stok Hareketleri ve Özet raporlarının geliştirilmesi, risk seviyelerinin renklendirilmesi ve `useMemo`/`reduce` gibi performans odaklı veri dönüştürme tekniklerinin kullanılması anlatılmaktadır.
+> 🔗 [**Hafta 8 İlerleme Videosu**](https://youtu.be/0_hUlw18ZAM?si=DhgSYQAle_vi4GLr)
+
+### 🔹 HAFTA 9 - Dinamik Bildirimler ve Kritik Uyarılar
+> **Açıklama:** Tahminleme algoritmasından gelen "3 gün içinde bitecek ürünler" verisinin, uygulama açılışında tek seferlik `Alert` penceresi ve Dashboard'da kalıcı bir uyarı banner'ı (Badge) olarak kullanıcıya sunulması anlatılmaktadır.
+> 🔗 [**Hafta 9 İlerleme Videosu**](https://youtu.be/_B-MyTYgmns?si=9hT092iuKE7mdTZm)
+
+### 🔹 HAFTA 10 - Ayarlar Modülünün Tamamlanması, Performans ve API Optimizasyonları
+> **Açıklama:** Ayarlar menüsünün sadeleştirilmesi, "Profili Düzenle" ve "Şifre Değiştir" özelliklerinin uçtan uca (backend uç noktaları + yeni ekranlar + AuthContext genişletmesi) hayata geçirilmesi, `UrunListesiScreen`'deki `FlatList`'in `React.memo`/`useCallback` ve performans props'larıyla optimize edilmesi ve API controller'larındaki gereksiz veri yüklerinin (`AsNoTracking`, gereksiz `Include` kaldırımı, hafif projeksiyonlar) temizlenmesi anlatılmaktadır.
+> 🔗 [**Hafta 10 İlerleme Videosu**](https://www.youtube.com/watch?v=5NP4-QUKkbQ)
+
+---
+
 ## 📌 1. Hafta Gelişmeleri
 Projenin ilk haftasında sistemin veritabanı mimarisi ve API uçları kurgulanmıştır:
 
@@ -108,39 +165,16 @@ Bu hafta uygulamaya, tahminleme algoritmasından gelen verilere dayalı **dinami
 
 ---
 
-## 📺 Haftalık İlerleme Videoları
+## 📌 10. Hafta Gelişmeleri
+Bu hafta, **Ayarlar** modülü işlevsel hale getirilmiş; mobil uygulamada liste performansı iyileştirilmiş ve backend tarafında gereksiz veri yükleri temizlenmiştir.
 
-### 🔹 HAFTA 1 - Backend Altyapısı ve Veritabanı Mimarisi
-> **Açıklama:** Bu videoda boş bir projeden başlanarak veritabanı tablolarının oluşturulması, EF Core entegrasyonu ve Swagger üzerinden API testleri gösterilmektedir.
-> 🔗 [**Hafta 1 İlerleme Videosu**](https://youtu.be/tInPIGB9GYA?si=1ORs8yQxzfHPRoZ0)
-
-### 🔹 HAFTA 2 - Mobil Navigasyon ve Backend Entegrasyonu
-> **Açıklama:** Projenin temel iskeletinin kurulumu, mobil uygulamanın API ile haberleşmesi ve Dashboard ekranına giriş anlatılmaktadır.
-> 🔗 [**Hafta 2 İlerleme Videosu**](https://youtu.be/AEs_-y3yFlc?si=aB1nAXWf7My5HHGR)
-
-### 🔹 HAFTA 3 - Mobil Ekran Tasarımları ve UI Geliştirme
-> **Açıklama:** Tüm uygulama ekranlarının (Login, Dashboard, Ürün Listesi, Ürün Detay, Stok Hareket, Barkod Tara) mockup'a uygun şekilde tasarlanması ve navigasyon akışının tamamlanması anlatılmaktadır.
-> 🔗 [**Hafta 3 İlerleme Videosu**](https://youtu.be/Yu5tpYA9Gg4?si=yBv-xytkQdQorvFx)
-
-### 🔹 HAFTA 4 - JWT Kimlik Doğrulama ve Rol Bazlı Yetkilendirme
-> **Açıklama:** Backend'de JWT token üretimi, `[Authorize(Roles)]` attribute'ları ve mobil tarafta AuthContext + AsyncStorage ile güvenli oturum yönetiminin hayata geçirilmesi anlatılmaktadır.
-> 🔗 [**Hafta 4 İlerleme Videosu**](https://youtu.be/dwVNvVvgUQc?si=9lCvJhpxnn5BGfbI)
-
-### 🔹 HAFTA 5-6 - Hata Giderme, Expo Migrasyonu ve Stabilizasyon
-> **Açıklama:** Expo SDK uyumsuzluğunun giderilmesi, TypeScript derleme hatalarının çözümü, eksik StockLogs endpoint'inin eklenmesi ve SQL NULL hatasının düzeltilmesi anlatılmaktadır.
-> 🔗 [**Hafta 5-6 İlerleme Videosu**](https://youtu.be/3Em_-unGBLk?si=YQ3uQsWEA-necTuv)
-
-### 🔹 HAFTA 7 - Kamera Entegrasyonu, Stok Loglama ve Tahminleme Algoritması
-> **Açıklama:** `expo-camera` ile gerçek kamera ve barkod okuma entegrasyonu, `OldStock`/`NewStock` ile gelişmiş stok loglama ve `ForecastController` ile akıllı tahminleme algoritmasının (günlük tüketim analizi, tahmini bitiş süresi, risk seviyesi) geliştirilmesi anlatılmaktadır.
-> 🔗 [**Hafta 7 İlerleme Videosu**](https://youtu.be/wSngDmpQosA?si=tTHgU0vysVtr1ehv)
-
-### 🔹 HAFTA 8 - Raporlar Modülü ve Veri Analiz Ekranları
-> **Açıklama:** `RaporlarScreen` içinde sekmeli bir rapor merkezinin kurulması; Kritik Stok, Tahmin, Stok Hareketleri ve Özet raporlarının geliştirilmesi, risk seviyelerinin renklendirilmesi ve `useMemo`/`reduce` gibi performans odaklı veri dönüştürme tekniklerinin kullanılması anlatılmaktadır.
-> 🔗 [**Hafta 8 İlerleme Videosu**](https://youtu.be/0_hUlw18ZAM?si=DhgSYQAle_vi4GLr)
-
-### 🔹 HAFTA 9 - Dinamik Bildirimler ve Kritik Uyarılar
-> **Açıklama:** Tahminleme algoritmasından gelen "3 gün içinde bitecek ürünler" verisinin, uygulama açılışında tek seferlik `Alert` penceresi ve Dashboard'da kalıcı bir uyarı banner'ı (Badge) olarak kullanıcıya sunulması anlatılmaktadır.
-> 🔗 [**Hafta 9 İlerleme Videosu**](https://youtu.be/_B-MyTYgmns?si=9hT092iuKE7mdTZm)
+* **Ayarlar Menüsü Sadeleştirme:** `AyarlarScreen` içindeki henüz işlevsel olmayan **"Görünüm"** satırı menüden kaldırıldı; yalnızca tam işlevsel olan **Hesap** ve **Bildirimler** bölümleri kullanıcıya sunulur hale getirildi.
+* **"Profili Düzenle" Özelliği (Uçtan Uca):** `HesapScreen`'deki yer tutucu (`handleNotImplemented`) kaldırılarak gerçek bir profil düzenleme akışı eklendi. Backend'de `[Authorize]` korumalı `PUT /api/Users/profile` uç noktası (JWT claim'inden kullanıcı kimliği doğrulama, e-posta benzersizlik kontrolü, alan doğrulama) ve yeni `ProfilDuzenleScreen` ekranı (Ad Soyad/E-posta formu, e-posta regex doğrulaması, "değişiklik var mı" kontrolüyle kaydet butonunun aktif/pasif yönetimi) oluşturuldu.
+* **"Şifre Değiştir" Özelliği (Uçtan Uca):** Aynı şekilde `[Authorize]` korumalı `PUT /api/Users/change-password` uç noktası (mevcut şifre doğrulama, en az 6 karakter kuralı, yeni şifrenin eskisinden farklı olması kontrolü) ve yeni `SifreDegistirScreen` ekranı (Mevcut/Yeni/Yeni Şifre Tekrar alanları, eşleşme ve uzunluk doğrulamaları) eklendi.
+* **AuthContext Genişletmesi:** `AuthContext`'e, profil güncellemesinin ardından oturum açan kullanıcının bilgilerini hem React state'inde hem `AsyncStorage`'da yeniden giriş yapmaya gerek kalmadan tazeleyen `updateUser` metodu kazandırıldı.
+* **Navigasyon:** Yeni `ProfilDuzenle` ve `SifreDegistir` ekranları `RootStackParamList`'e ve `App.tsx` Stack Navigator'üne tip güvenli şekilde eklendi.
+* **FlatList Performans Optimizasyonu:** Uygulamadaki tek `FlatList` kullanım noktası olan `UrunListesiScreen`'de, `ProductCard` bileşeni özel karşılaştırma fonksiyonuyla `React.memo`'ya alındı; `keyExtractor` ve `renderItem` referansları `useCallback` ile sabitlenerek gereksiz yeniden render'ların önüne geçildi. Ayrıca `removeClippedSubviews`, `initialNumToRender`, `maxToRenderPerBatch`, `updateCellsBatchingPeriod` ve `windowSize` props'ları eklenerek liste kaydırma performansı ve bellek kullanımı iyileştirildi.
+* **API'de Gereksiz Yüklerin Temizlenmesi:** `ProductsController` ve `CategoriesController`'daki salt-okunur `GET` uç noktalarına `.AsNoTracking()` eklenerek Entity Framework Core'un gereksiz değişiklik izleme (change tracking) yükü kaldırıldı. `StockLogsController`'daki `GET /api/StockLogs` uç noktasında, projeksiyon zaten yalnızca `ProductName` alanını kullandığından gereksiz hale gelen `.Include(l => l.Product)` çağrısı kaldırılarak EF Core'un tek bir SQL JOIN üretmesi sağlandı. `ForecastController`'da ise tüm ürünleri ve stok hareketlerini tam varlık olarak yükleyen sorgular, yalnızca hesaplama için gerekli alanları seçen hafif projeksiyonlara dönüştürüldü; tüm bu sorgulara `.AsNoTracking()` eklendi.
 
 ---
 

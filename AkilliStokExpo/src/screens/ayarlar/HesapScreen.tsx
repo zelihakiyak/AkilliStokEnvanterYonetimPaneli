@@ -18,10 +18,6 @@ export default function HesapScreen({ navigation }: Props) {
     ]);
   };
 
-  const handleNotImplemented = (title: string) => {
-    Alert.alert(title, 'Bu özellik yakında eklenecek.');
-  };
-
   return (
     <View style={s.root}>
       {/* Header */}
@@ -70,7 +66,7 @@ export default function HesapScreen({ navigation }: Props) {
         <View style={s.group}>
           <TouchableOpacity
             style={[s.actionRow, s.rowDivider]}
-            onPress={() => handleNotImplemented('Profili Düzenle')}
+            onPress={() => navigation.navigate('ProfilDuzenle')}
             activeOpacity={0.7}
           >
             <View style={s.actionIconBox}>
@@ -82,7 +78,7 @@ export default function HesapScreen({ navigation }: Props) {
 
           <TouchableOpacity
             style={[s.actionRow, s.rowDivider]}
-            onPress={() => handleNotImplemented('Şifre Değiştir')}
+            onPress={() => navigation.navigate('SifreDegistir')}
             activeOpacity={0.7}
           >
             <View style={s.actionIconBox}>

@@ -17,9 +17,10 @@ type AuthState = {
 };
 
 type AuthContextType = AuthState & {
-  login:   (email: string, password: string) => Promise<boolean>;
-  logout:  () => Promise<void>;
-  isAdmin: boolean;
+  login:      (email: string, password: string) => Promise<boolean>;
+  logout:     () => Promise<void>;
+  updateUser: (partial: Partial<UserType>) => Promise<void>;
+  isAdmin:    boolean;
 };
 
 const TOKEN_KEY = '@akillistok_token';
@@ -77,6 +78,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const updateUser = useCallback(async (partial: Partial<UserType>) => {
+    setUser(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...partial };
+      AsyncStorage.setItem(USER_KEY, JSON.stringify(updated)).catch(() => {});
+      return updated;
+    });
+  }, []);
+
   const logout = useCallback(async () => {
     await Promise.all([
       AsyncStorage.removeItem(TOKEN_KEY),
@@ -90,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAdmin = user?.role === 'Admin';
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout, isAdmin }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, logout, updateUser, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

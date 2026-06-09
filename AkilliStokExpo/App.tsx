@@ -17,6 +17,8 @@ import AyarlarScreen     from './src/screens/AyarlarScreen';
 import HesapScreen       from './src/screens/ayarlar/HesapScreen';
 import BildirimlerScreen from './src/screens/ayarlar/BildirimlerScreen';
 import GorunumScreen     from './src/screens/ayarlar/GorunumScreen';
+import ProfilDuzenleScreen from './src/screens/ayarlar/ProfilDuzenleScreen';
+import SifreDegistirScreen from './src/screens/ayarlar/SifreDegistirScreen';
 
 export type UserType = {
   id: number; fullName: string; email: string; role: string;
@@ -41,6 +43,8 @@ export type RootStackParamList = {
   Hesap:       undefined;
   Bildirimler: undefined;
   Gorunum:     undefined;
+  ProfilDuzenle: undefined;
+  SifreDegistir: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -72,6 +76,8 @@ function RootNavigator() {
           <Stack.Screen name="Hesap"       component={HesapScreen} />
           <Stack.Screen name="Bildirimler" component={BildirimlerScreen} />
           <Stack.Screen name="Gorunum"     component={GorunumScreen} />
+          <Stack.Screen name="ProfilDuzenle" component={ProfilDuzenleScreen} />
+          <Stack.Screen name="SifreDegistir" component={SifreDegistirScreen} />
         </>
       ) : (
         <Stack.Screen name="Login" component={LoginScreen} />
